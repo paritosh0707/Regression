@@ -1,0 +1,10 @@
+<svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g id="dashboard">
+<mask id="mask0_4893_8905" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="0" y="0" width="21" height="21">
+<rect id="Bounding box" width="21" height="21" fill="#D9D9D9"/>
+</mask>
+<g mask="url(#mask0_4893_8905)">
+<path id="dashboard_2" d="M11.375 7.875V2.625H18.375V7.875H11.375ZM2.625 11.375V2.625H9.625V11.375H2.625ZM11.375 18.375V9.625H18.375V18.375H11.375ZM2.625 18.375V13.125H9.625V18.375H2.625Z" fill="#72777F"/>
+</g>
+</g>
+</svg>

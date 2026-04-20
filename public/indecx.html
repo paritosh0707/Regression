@@ -1,0 +1,29 @@
+<video id="myVideo" width="640" height="360" controls>
+    <source id="videoSource" src="video1.mp4" type="video/mp4">
+    <source src="video1.webm" type="video/webm">
+    <source src="video1.ogv" type="video/ogg">
+    Your browser does not support the video tag.
+</video>
+
+<button onclick="toggleVideo()">Toggle Video</button>
+
+<script>
+    var videoSources = [
+        "kandra-triangle.mp4",
+        "james-vs-ghosal.mp4",
+        // Add more video sources with different formats here
+    ];
+
+    var currentVideoIndex = 0;
+
+    function toggleVideo() {
+        currentVideoIndex = (currentVideoIndex + 1) % videoSources.length;
+        var video = document.getElementById("myVideo");
+        var source = document.getElementById("videoSource");
+
+        video.pause();
+        source.src = videoSources[currentVideoIndex];
+        video.load();
+        video.play();
+    }
+</script>

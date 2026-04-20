@@ -1,0 +1,5 @@
+Source Column,Target Column,Transformation Logic,Primary Key,Constraints,Data Type
+state,state,Direct Move,,State must be a valid Indian state.,String
+city,city,"SELECT REPLACE(city, ' ', '_') AS city",,City must belong to the selected State.,String
+street_address,street_address,"SELECT REPLACE(street_address, 'Suite', 'Apt') AS street_address",,"Street Address must match the selected Post Code, City, and State.",string
+post_code,post_code,Direct Move,,Post Code must correspond to the selected City and State.,int

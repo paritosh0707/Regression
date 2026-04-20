@@ -1,0 +1,18 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <rect width="120" height="120" rx="16" fill="#EFF6FF"/>
+
+  <!-- Window -->
+  <rect x="15" y="20" width="80" height="60" rx="6" fill="#FFFFFF" stroke="#334155" stroke-width="2"/>
+  <rect x="15" y="20" width="80" height="12" rx="6" fill="#93C5FD"/>
+
+  <!-- Lines -->
+  <rect x="25" y="40" width="10" height="4" rx="2" fill="#3B82F6"/>
+  <rect x="40" y="40" width="30" height="4" rx="2" fill="#93C5FD"/>
+  <rect x="25" y="50" width="10" height="4" rx="2" fill="#3B82F6"/>
+  <rect x="40" y="50" width="40" height="4" rx="2" fill="#93C5FD"/>
+  <rect x="25" y="60" width="10" height="4" rx="2" fill="#3B82F6"/>
+  <rect x="40" y="60" width="25" height="4" rx="2" fill="#93C5FD"/>
+
+  <!-- Gear -->
+  <circle cx="85" cy="80" r="10" fill="#60A5FA" stroke="#334155" stroke-width="2"/>
+</svg>

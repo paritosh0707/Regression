@@ -1,0 +1,38 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+
+  <defs>
+    <!-- Soft glow -->
+    <filter id="softGlow">
+      <feGaussianBlur stdDeviation="1.5" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background -->
+  <rect width="120" height="120" rx="16" fill="#EFF6FF"/>
+
+  <!-- Servers -->
+  <g stroke="#3B82F6" stroke-width="2" filter="url(#softGlow)">
+    <rect x="20" y="15" width="80" height="20" rx="6" fill="none"/>
+    <rect x="20" y="40" width="80" height="20" rx="6" fill="none"/>
+    <rect x="20" y="65" width="80" height="20" rx="6" fill="none"/>
+  </g>
+
+  <!-- Indicators -->
+  <circle cx="30" cy="25" r="4" fill="#60A5FA"/>
+  <circle cx="30" cy="50" r="4" fill="#60A5FA"/>
+  <circle cx="30" cy="75" r="4" fill="#60A5FA"/>
+
+  <!-- Connection -->
+  <g stroke="#3B82F6" stroke-width="2" filter="url(#softGlow)">
+    <line x1="60" y1="85" x2="60" y2="100"/>
+    <line x1="20" y1="100" x2="100" y2="100"/>
+  </g>
+
+  <!-- Node -->
+  <circle cx="60" cy="100" r="6" fill="#3B82F6"/>
+
+</svg>

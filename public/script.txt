@@ -1,0 +1,834 @@
+```python
+
+import argparse
+import gc
+import json
+import logging
+import math
+import numpy as np
+import os
+import pandas as pd
+import shutil
+import subprocess
+import torch
+from datetime import datetime
+
+
+#define global variables
+global use_azure
+global use_aws
+
+
+#define constant variables
+use_azure=None
+use_aws=None
+download_reqs_path = "requirements"
+download_data_path = "data"
+download_model_path = "models"
+extracted_data_path = os.path.join(download_data_path, "extracted_data")
+output_dir = os.path.join(download_model_path, "finetune_model_training_checkpoints")
+merged_dir = os.path.join(download_model_path, "finetune_model_adapters_merged")
+timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+
+
+# Configure the logging module
+logging.basicConfig(level=logging.INFO,
+                    format='%(asctime)s - %(levelname)s - %(message)s',
+                    filename=f'finetuning_{timestamp}.log',
+                    filemode='w')  # Use 'w' to overwrite the log file; use 'a' to append
+logging.info(f"########### Current timestamp: {timestamp} ############")
+
+
+
+def parse_args():
+    """
+    Parses command line arguments.
+
+    Returns:
+        args (argparse.Namespace): Parsed arguments.
+    """
+    try:
+        parser = argparse.ArgumentParser()
+        parser.add_argument('params_file', type=str, help='Path to the params.json file')
+        args = parser.parse_args()
+        return args
+    
+    except Exception as ex:
+        logging.error(f"############ Error occured while parsing arguments - {ex} ############")
+
+def load_params(params_file):
+    """
+    Load parameters from a JSON file.
+
+    Parameters:
+        params_file (str): Path to the JSON file containing parameters.
+
+    Returns:
+        params (dict): A dictionary containing the loaded parameters.
+    """
+    try:
+        with open(params_file) as f:
+            params = json.load(f)
+        return params
+    
+    except Exception as ex:
+        logging.error(f"############ Error occured while loading params from parameters.json - {ex} ############")
+
+def download_from_s3(key_id, secret_key, session_token, bucket_name, object_name, download_path):
+    """
+    Download a file from AWS S3.
+
+    Parameters:
+        key_id (str): AWS access key ID.
+        secret_key (str): AWS secret access key.
+        session_token (str): AWS session token.
+        bucket_name (str): Name of the S3 bucket.
+        object_name (str): Name of the object to download.
+        download_path (str): Local path where the file will be saved.
+    """
+    try:
+        import boto3
+        from botocore.exceptions import NoCredentialsError
+        
+        s3 = boto3.client(
+            's3',
+            aws_access_key_id= key_id,
+            aws_secret_access_key= secret_key,
+            aws_session_token= session_token
+        )
+        s3.download_file(bucket_name, object_name, download_path)
+        logging.info(f"############ Downloaded {object_name} to {download_path} ############")
+    
+    except NoCredentialsError:
+        logging.error("############ AWS credentials not available or invalid. ############")
+
+
+def download_from_azure(account_name, account_key, container_name, blob_name, download_path):
+    """
+    Download a file from Azure Blob Storage.
+
+    Parameters:
+        account_name (str): Azure Storage account name.
+        account_key (str): Azure Storage account key.
+        container_name (str): Name of the Azure Blob Storage container.
+        blob_name (str): Name of the blob to download.
+        download_path (str): Local path where the file will be saved.
+        extracted_data_path (str, optional): Local path where the extracted data will be stored.
+            Defaults to the current working directory.
+    """
+    try:
+        from azure.storage.blob import BlobServiceClient        
+        
+        blob_service_client = BlobServiceClient(
+            account_url= f"https://{account_name}.blob.core.windows.net", 
+            credential= account_key
+        )
+        
+        blob_client = blob_service_client.get_blob_client(
+            container_name, 
+            blob_name,
+            snapshot= None
+        )        
+             
+        # Create the download_path folder if it doesn't exist
+        os.makedirs(download_path, exist_ok=True)
+        
+        file_name = blob_name.split("/")[-1]
+
+        if '.' not in file_name:
+            raise Exception(f"{blob_name} must be a file")
+
+        file_path = os.path.join(download_path, file_name)
+        
+        with open(file_path, "wb") as f:
+            data = blob_client.download_blob()
+            data.readinto(f)
+        
+        logging.info(f"############ Downloaded {blob_name} to {file_path} ############")
+        
+        # Unzip the file using shutil
+        if blob_name.endswith(".zip"):
+            shutil.unpack_archive(file_path, extracted_data_path, format='zip')
+            logging.info(f"############ Unzipped {blob_name} to {extracted_data_path} ############")
+        
+    except Exception as ex:
+        logging.error(f"############ Error occured while trying to connect to Azure Blob Storage - {ex} ############")
+
+
+def download_model_from_azure(account_name, account_key, container_name, blob_name, download_path):
+    try:
+        from azure.storage.blob import BlobServiceClient
+        
+        blob_service_client = BlobServiceClient(
+                account_url= f"https://{account_name}.blob.core.windows.net", 
+                credential= account_key
+            )
+               
+        # Get a reference to the container
+        container_client = blob_service_client.get_container_client(container_name)
+
+        # List blobs in the directory
+        blobs = container_client.list_blobs(name_starts_with=blob_name)
+        
+        # Create the download_path folder if it doesn't exist
+        os.makedirs(os.path.join(download_path, blob_name), exist_ok=True)
+        
+        max_retries = 3  # Maximum number of download retries in case of timeout
+        
+        # Download each blob in the directory
+        for blob in blobs:
+            if ".git" not in blob.name:
+            
+                blob_client = container_client.get_blob_client(blob.name)
+                    
+                # Specify the local file path where you want to save the downloaded blob
+                local_file_path = os.path.join(download_path, blob.name)
+                
+                # Check if the local file already exists
+                if os.path.exists(local_file_path):
+                    logging.warning(f"Skipping download for {blob.name}. File already exists.")
+                    continue  # Skip to the next iteration
+                
+                for retry_count in range(max_retries):
+                    try:
+                        # Download the blob
+                        with open(local_file_path, 'wb') as local_file:
+                            data = blob_client.download_blob()
+                            data.readinto(local_file)
+
+                        logging.info(f'############ Downloaded blob: {blob.name} to {local_file_path} ############')
+                        break
+                    
+                    except TimeoutError as ex:
+                        if retry_count < max_retries - 1:
+                            logging.warning(f"TimeoutError: Retry {retry_count + 1}/{max_retries}")
+                        else:
+                            logging.error(f"Max retries reached. Unable to download {blob.name}.")
+
+    except Exception as ex:
+        logging.error(f"############ An error occurred while downloading model from Azure - {ex} ############")
+
+
+def download_requirements(params, download_path):
+    """
+    Download model files from Azure Blob Storage.
+
+    Parameters:
+        account_name (str): Azure Storage account name.
+        account_key (str): Azure Storage account key.
+        container_name (str): Name of the Azure Blob Storage container.
+        blob_name (str): Prefix or directory name within the container.
+        download_path (str): Local path where the model files will be saved.
+    """
+    try:
+        command = ['pip', 'install', 'azure-storage-blob']
+        subprocess.run(command)
+        
+        logging.getLogger('azure.core.pipeline.policies.http_logging_policy').setLevel(logging.WARNING)
+        
+        # Checking which cloud service is being accessed
+        if use_aws and params["data_object_key"]: 
+            
+            download_from_s3(
+                params["key_id"],
+                params["secret_key"],
+                params["session_token"],
+                params["bucket_name"], 
+                params["data_object_key"], 
+                download_path
+            )
+            
+        elif use_azure and params["data_blob_name"]:
+                
+            download_from_azure(
+                params["account_name"], 
+                params["account_key"], 
+                params["container_name"], 
+                params["reqs_blob_name"], 
+                download_path
+            )                
+            
+        else:
+            logging.warning("############ No requirements.txt file provided ############")
+    
+    except Exception as ex:
+        logging.error(f"############ An error occurred while downloading requirements file from Cloud - {ex} ############")
+
+
+
+def download_data(download_path, params):
+    """
+    Parameters:
+        download_path (str): Local path where the dataset will be saved.
+        params (dict): Dictionary containing parameters for accessing the cloud storage service.
+            For AWS:
+                - key_id (str): AWS access key ID.
+                - secret_key (str): AWS secret access key.
+                - session_token (str): AWS session token.
+                - bucket_name (str): Name of the S3 bucket.
+                - data_object_key (str): Key of the dataset object in the S3 bucket.
+            For Azure:
+                - account_name (str): Azure Storage account name.
+                - account_key (str): Azure Storage account key.
+                - container_name (str): Name of the Azure Blob Storage container.
+                - data_blob_name (str): Name of the dataset blob in the Azure container.
+        use_aws (bool): Flag indicating whether to use AWS for dataset download.
+        use_azure (bool): Flag indicating whether to use Azure for dataset download.
+    """
+    try:
+        if use_aws: 
+            
+            download_from_s3(
+                params["key_id"],
+                params["secret_key"],
+                params["session_token"],
+                params["bucket_name"], 
+                params["data_object_key"], 
+                download_path
+            )
+                
+                    
+        elif use_azure:
+                
+            download_from_azure(
+                params["account_name"], 
+                params["account_key"], 
+                params["container_name"], 
+                params["data_blob_name"], 
+                download_path
+            )        
+            
+            
+        else:
+            logging.warning("############ No dataset provided ############")
+    
+    except Exception as ex:
+        logging.error(f"############ An error occurred while downloading dataset from Cloud - {ex} ############")
+
+
+def create_train_test():
+    """
+    Create train and test datasets from CSV files.
+
+    Returns:
+        two DataFrames: train and test.
+    """
+    try:
+        # List the contents of the extracted directory
+        extracted_files = os.listdir(extracted_data_path)
+        
+        # Count the number of files with a .csv extension
+        csv_files = [file for file in extracted_files if file.endswith('.csv')]
+        
+        if len(csv_files) == 2:
+            train_size = 0
+            test_size = 0
+            
+            #read the first csv file
+            if csv_files[0].endswith('.csv'):
+                csv_file = os.path.join(extracted_data_path, csv_files[0])
+                df_0 = pd.read_csv(csv_file)
+                size_0 = df_0.shape[0]
+            
+            #read the second csv file
+            if csv_files[1].endswith('.csv'):
+                csv_file = os.path.join(extracted_data_path, csv_files[1])
+                df_1 = pd.read_csv(csv_file)
+                size_1 = df_1.shape[0]
+            
+            #find train and test dataframes
+            if size_0 > size_1:
+                train = df_0
+                test = df_1
+            else:
+                train = df_1
+                test = df_0
+            
+            logging.info("############ created train and test datasets from the given data files ############")
+
+        elif len(csv_files) == 1:    
+            from sklearn.model_selection import train_test_split
+
+            #read the csv file
+            csv_file = os.path.join(extracted_data_path, csv_files[0])
+            df = pd.read_csv(csv_file)
+            
+            # Split the DataFrame into training and testing sets
+            train, test = train_test_split(df, test_size=0.2, random_state=42)
+            
+            logging.info("############ Splitted the given data file into train and test datasets ############")
+
+        else:
+            logging.info("############ CSV file is not provided ############")
+        
+        return train, test
+    
+    except Exception as ex:
+        logging.error(f"############ An error occurred while creating train and test splits - {ex} ############")
+
+
+def convert_data_to_hf(train, test):
+    """
+    Convert train and test datasets to Hugging Face (HF) dataset format.
+
+    Parameters:
+        train (pd.DataFrame): DataFrame representing the training dataset.
+        test (pd.DataFrame): DataFrame representing the testing dataset.
+
+    Returns:
+        Two HF datasets: train_dataset and valid_dataset.
+    """
+    try:
+        from datasets import load_dataset
+        from random import randrange
+        
+        # Create a "data" directory as needed by HF Dataset 
+        os.makedirs("data", exist_ok=True)
+        data_path = "data"
+        
+        # save the files before converting to HF dataset format
+        train.to_csv(os.path.join(data_path, "train.csv"), index=False)
+        test.to_csv(os.path.join(data_path, "test.csv"), index=False)
+        
+        #convert the datasets to HF dataset format
+        train_dataset = load_dataset(data_path, split="train")
+        valid_dataset = load_dataset(data_path, split="validation")
+        
+        # Show dataset size
+        logging.info(f"############ train dataset size: {len(train_dataset)} ############")
+        logging.info(f"############ valid dataset size: {len(valid_dataset)} ############")    
+
+        # Show an example
+        logging.info(f"############ example row: {train_dataset[randrange(len(train_dataset))]} ############")
+        
+        return train_dataset, valid_dataset
+    
+    except Exception as ex:
+        logging.error(f"############ An error occurred while converting data to HuggingFace Datasets format - {ex} ############")
+
+
+def download_model():    
+    """
+    Download a model from a cloud storage service, AWS S3 or Azure Blob Storage.
+    """    
+    try:
+        # Checking which cloud service is being accessed
+        if use_aws: 
+            
+            download_from_s3(
+                params["key_id"],
+                params["secret_key"],
+                params["session_token"],
+                params["bucket_name"], 
+                params["model_object_key"], 
+                download_model_path
+            )
+                
+                    
+        elif use_azure:
+                
+            download_model_from_azure(
+                params["account_name"], 
+                params["account_key"], 
+                params["container_name"], 
+                params["model_blob_name"], 
+                download_model_path
+            )
+            
+            
+        else:
+            logging.warning("############ No model provided ############")
+        
+    except Exception as ex:
+        logging.error(f"############ An error occurred while calling download model function - {ex} ############")
+
+    
+def load_model(params):
+    """
+    Load a pre-trained model and tokenizer.
+
+    Parameters:
+        params (dict): Dictionary containing parameters for loading the model.
+            - model_blob_name (str): Name of the model blob.
+            - download_model_path (str): Local path where the model is downloaded.
+
+    Returns:
+        loaded model and tokenizer.
+    """
+    try:
+        from transformers import AutoTokenizer, AutoModelForCausalLM, BitsAndBytesConfig
+        
+        model_name = params["model_blob_name"]#.split(".zip")[0]
+        model_id = os.path.join(download_model_path, model_name)
+        
+        # Get the compute data type
+        compute_dtype = getattr(torch, "float16")
+
+        # BitsAndBytesConfig int-4 config
+        bnb_config = BitsAndBytesConfig(
+            load_in_4bit=True,
+            bnb_4bit_use_double_quant=False,
+            bnb_4bit_quant_type="nf4",
+            bnb_4bit_compute_dtype=compute_dtype
+        )
+
+        # Load the tokenizer
+        tokenizer = AutoTokenizer.from_pretrained(model_id, trust_remote_code=True)
+        tokenizer.pad_token = tokenizer.eos_token
+        tokenizer.padding_side = "right"
+        
+        # Load the pretrained model
+        logging.info("############ model is loading ############")
+        model = AutoModelForCausalLM.from_pretrained(model_id, 
+                                                     quantization_config = bnb_config, 
+                                                     use_cache=False, 
+                                                     device_map="cuda:0")
+        model.config.pretraining_tp = 1
+        
+        logging.info("############ model and tokenizer are loaded ############")
+        
+        return model, tokenizer
+    
+    except Exception as ex:
+        logging.error(f"############ An error occurred while loading the model - {ex} ############")
+
+
+def clear_vram(model, trainer):
+    """
+    Clear GPU memory (VRAM) by deleting objects and emptying the CUDA cache.
+
+    Parameters:
+        model: The deep learning model to be deleted.
+        trainer: The trainer object to be deleted.
+    """
+    try:
+        del model
+        del trainer
+        logging.info(f"############ gc: {gc.collect()} ############")
+        logging.info(f"############ gc: {gc.collect()} ############")
+        torch.cuda.empty_cache()
+        logging.info(f"############ gc: {gc.collect()} ############")
+        logging.info("############ vram cleared ############")
+    
+    except Exception as ex:
+        logging.error(f"############ An error occurred while clearing VRAM - {ex} ############")
+
+
+def train_model(model, model_params, tokenizer, train_dataset, valid_dataset):
+    """
+    Fine-tune a pre-trained model using the specified training parameters.
+
+    Parameters:
+        model: The pre-trained model to be fine-tuned.
+        model_params (dict): Dictionary containing fine-tuning parameters.
+        tokenizer: The tokenizer associated with the model.
+        train_dataset: The training dataset.
+        valid_dataset: The validation dataset.
+
+    Returns:
+        SFTTrainer: The trainer object used for fine-tuning.
+    """
+    try:
+        from peft import LoraConfig
+        from transformers import TrainingArguments
+        from trl import SFTTrainer
+        
+        
+        def compute_metrics(): # This function isn't actually invoked at all but the place holder is needed
+            return 0
+
+        # LoRA config based on QLoRA paper
+        peft_config = LoraConfig(
+                lora_alpha= 16,
+                lora_dropout=0.1,
+                r= model_params["lora_r"],
+                bias="none",
+                task_type="CAUSAL_LM",
+                # target_modules=[
+                #     "q_proj", "v_proj"
+                # ]
+        )
+        
+        # Define the training arguments
+        training_args = TrainingArguments(
+                                            output_dir=output_dir,
+                                            num_train_epochs= model_params["epochs"],
+                                            per_device_train_batch_size= model_params["train_batch_size"], # 6 if use_flash_attention else 4,
+                                            gradient_accumulation_steps= 1,
+                                            gradient_checkpointing=True,
+                                            prediction_loss_only=True,
+                                            optim="paged_adamw_32bit",
+                                            #save_steps=save_steps,
+                                            logging_steps= 25,
+                                            save_strategy="epoch",
+                                            evaluation_strategy="epoch",
+                                            logging_strategy="epoch",
+                                            eval_accumulation_steps= 1,
+                                            #load_best_model_at_end=True,
+                                            #greater_is_better=False,
+                                            learning_rate= model_params["learning_rate"],
+                                            weight_decay=0.001,
+                                            fp16=True,
+                                            bf16=False,
+                                            max_grad_norm=0.3,
+                                            warmup_ratio=0.03,
+                                            #max_steps=max_steps,
+                                            group_by_length=False,
+                                            lr_scheduler_type="cosine",
+                                            disable_tqdm=False,
+                                            report_to="tensorboard",
+                                            seed= 42
+                                        )
+        
+        # Create the trainer
+        trainer = SFTTrainer(
+            model=model,
+            train_dataset=train_dataset,
+            eval_dataset=valid_dataset,
+            compute_metrics=compute_metrics,
+            dataset_text_field='text',
+            peft_config=peft_config,
+            max_seq_length= 1024,
+            tokenizer=tokenizer,
+            packing=True,
+            args=training_args,
+        )
+        
+        logging.info("############ fine tuning started ############")
+        trainer.train()
+        trainer.save_model()
+        logging.info("############ fine tuning completed and model saved ############")
+        #shutil.make_archive("./user_finetuned_model_zipped", "zip", "./user_finetuned_model")
+        clear_vram(model, trainer)    
+        
+        return trainer
+    
+    except Exception as ex:
+        logging.error(f"############ An error occurred while training the model - {ex} ############")
+
+
+def merge_adapters(output_dir, merged_dir, tokenizer):
+    """
+    Merge adapters in a trained model and save the merged model.
+
+    Parameters:
+        output_dir (str): Directory containing the trained model with adapters.
+        merged_dir (str): Directory where the merged model will be saved.
+        tokenizer: The tokenizer associated with the model.
+
+    Returns:
+        merged model and tokenizer.
+    """
+    try:
+        from peft import AutoPeftModelForCausalLM
+        
+        logging.info("############ loading trained model for merging adapters ############")
+        new_model = AutoPeftModelForCausalLM.from_pretrained(
+            output_dir,
+            low_cpu_mem_usage=True,
+            return_dict=True,
+            torch_dtype=torch.float16,
+            device_map="cuda:0",
+        )
+
+        # Merge LoRA and base model
+        logging.info("merging lora adapters")
+        merged_model = new_model.merge_and_unload()
+
+        # Save the merged model and tokenizer
+        merged_model.save_pretrained(merged_dir, 
+                                     max_shard_size="3GB", 
+                                     safe_serialization=True)
+        tokenizer.save_pretrained(merged_dir)
+        logging.info("adapters are merged and final model is saved")
+        
+        return merged_model, tokenizer
+    
+    except Exception as ex:
+        logging.error(f"############ An error occurred while merging model adapters - {ex} ############")
+
+    
+def evaluate_model(model, tokenizer, eval_dataset, metric, use_tokenizer=False, use_lang=False, lang="en"): #### USER CHANGE REQUIRED
+    """
+    Evaluate a model using a specified metric on an evaluation dataset.
+
+    Parameters:
+        model: The fine-tuned model to be evaluated.
+        tokenizer: The tokenizer associated with the model.
+        eval_dataset: The evaluation dataset.
+        metric: The metric used for evaluation.
+        use_tokenizer (bool): Flag indicating whether to use tokenizer for decoding summaries.
+        use_lang (bool): Flag indicating whether to use language-specific evaluation.
+        lang (str): Language code for language-specific evaluation.
+
+    Returns:
+        dict: A dictionary containing the computed metric scores.
+    """
+    predictions = []
+    references = []
+    
+    try:    
+        for example in eval_dataset:
+        
+            #### USER CHANGE REQUIRED start
+            sample = example['text']
+            groundtruth = sample.split("###\noutput:\n")[1]
+            prompt = sample.split("###\noutput:\n")[0]+"###\noutput:"
+            #### USER CHANGE REQUIRED end
+
+            # Prepare input text
+            input_ids = tokenizer(prompt, return_tensors="pt")["input_ids"]
+            input_ids = input_ids.to("cuda:0")
+            
+            # Generate summary
+            outputs = model(input_ids)
+            summary = outputs.logits.argmax(dim=-1)
+
+            if use_tokenizer:
+                summary = tokenizer.decode(summary[0])
+                predictions.append(summary)
+                references.append(groundtruth)
+
+            else:
+                list_pred = summary[0].tolist()
+                len_pred = len(list_pred)
+                list_grt = tokenizer(groundtruth, return_tensors="pt")["input_ids"][0].tolist()
+                len_grt = len(list_grt)
+
+                if len_grt < len_pred:
+                    list_grt.extend( [0] * (len_pred-len_grt) )
+                else:
+                    list_pred.extend( [0] * (len_grt-len_pred) )
+
+                predictions.extend(list_pred)
+                references.extend(list_grt)
+
+        #predictions = [tensor.to('cuda') for tensor in predictions]
+        #references = [tensor.to('cuda') for tensor in references]
+        
+        if use_lang:
+            scores = metric.compute(predictions=predictions, references=references, lang=lang)
+        else:
+            scores = metric.compute(predictions=predictions, references=references)
+
+        return scores
+    
+    except Exception as ex:
+        print(f"############ Exception occurred in model evaluation - {ex} ############")
+    
+
+def get_model_metrics(model, tokenizer, trainer, valid_dataset):    
+    """
+    Get various metrics for evaluating a fine-tuned model.
+
+    Parameters:
+        model: The fine-tuned model to be evaluated.
+        tokenizer: The tokenizer associated with the model.
+        trainer: The trainer object used for fine-tuning.
+        valid_dataset: The validation dataset.
+    """
+    try:
+        import evaluate 
+        
+        scores = {
+            "accuracy": 0,
+            "perplexity": 0,
+            "bleu": 0,
+            "bert_f1": 0,
+            "bert_precision": 0,
+            "bert_recall": 0
+        }
+        
+        logging.info("model evaluation for metric accuracy is in progress")
+        metric = evaluate.load("accuracy")
+        out = evaluate_model(model, tokenizer, valid_dataset, metric, False)
+        scores["accuracy"] = out["accuracy"]
+        
+        logging.info("model evaluation for metric bleu score is in progress")
+        metric = evaluate.load("bleu")
+        out = evaluate_model(model, tokenizer, valid_dataset, metric, True)
+        scores["bleu"] = out["bleu"]
+        
+        logging.info("model evaluation for metric bert score is in progress")
+        metric = evaluate.load("bertscore")
+        out = evaluate_model(model, tokenizer, valid_dataset, metric, True, True, "en")
+        scores["bert_f1"] = out["f1"]
+        scores["bert_precision"] = out["precision"]
+        scores["bert_recall"] = out["recall"]
+        
+        logging.info("model evaluation for metric perplexity is in progress")
+        out = trainer.evaluate()
+        scores["perplexity"] = math.exp(out['eval_loss'])
+        
+        # Saving scores to JSON file
+        def Average(lst): 
+            return sum(lst) / len(lst) 
+
+        for k in scores:
+            if type(scores[k]) == list:
+                scores[k] = Average(scores[k])
+
+        with open("evaluation_score.json", "w", encoding='utf-8') as outfile: 
+            json.dump(scores, outfile) 
+        
+        logging.info("############# Metrics: #################")
+        logging.info(scores)
+        logging.info("metrics are saved in evaluation_score.json file")
+    
+    except Exception as ex:
+        print(f"############ Exception occurred in metric calculation - {ex} ############")
+    
+    
+if __name__ == "__main__":
+
+    ###### Getting Arguments from Command Line ############
+    args = parse_args()
+    arg_params = load_params(args.params_file)
+    
+
+    ############# Read the Cloud & Model Params ############
+    model_params = arg_params["model_params"]
+    cloud_params = arg_params["cloud_params"]
+    if cloud_params["use_cloud"] == "azure":        
+        use_azure = True
+        params = cloud_params["azure_blob_params"]
+        reqs_file = params['reqs_blob_name'].split("/")[-1]
+    
+    else:
+        use_aws = True
+        params = cloud_params["aws_s3_params"]
+        reqs_file = params['reqs_object_key'] 
+    
+    
+    ################## Install libraries from requirements.txt ##################        
+    download_requirements(params, download_reqs_path)
+    
+    reqs_file_path = os.path.join(download_reqs_path, reqs_file)
+    if os.path.isfile(reqs_file_path):
+        command = ['pip', 'install', '-r', reqs_file_path]
+        subprocess.run(command)
+    else:
+        logging.error("Requirements.txt file is not downloaded")    
+        
+    ################### Download dataset and process ############################
+    download_data(download_data_path, params)
+    
+    train, test = create_train_test()
+    
+    train_dataset, valid_dataset = convert_data_to_hf(train, test)
+    
+    
+    ################### Download model and fine-tune ############################
+    download_model()
+    
+    model, tokenizer = load_model(params)
+    
+    trainer = train_model(model, model_params, tokenizer, train_dataset, valid_dataset)
+
+    merged_model, tokenizer = merge_adapters(output_dir, merged_dir, tokenizer)        
+        
+    ############### Model evaluation and metrics calculation #################
+    get_model_metrics(merged_model, tokenizer, trainer, valid_dataset)
+
+
+```

@@ -1,0 +1,11 @@
+Test Case ID,Test Case Title,Test Steps,Expected Output
+1,Verify successful Contact Us form submission with valid data,"1. Navigate to https://www.incedoinc.com/.
+2. Click on the 'Contact' navigation item in the main menu.
+3. Verify that the Contact page is displayed.
+4. Enter 'John' into the 'First Name' field.
+5. Enter 'Doe' into the 'Last Name' field.
+6. Enter 'test@gmail.com' into the 'Email' field.
+7. Enter 'QE' into the 'Job Title' field.
+8. Fill in all other required fields with valid data (if present).
+9. Click the 'Submit' button on the contact form.
+10. Verify that a success message or confirmation is displayed indicating the form was submitted successfully.",The contact form is submitted successfully and a confirmation message is displayed.

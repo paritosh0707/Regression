@@ -1,0 +1,397 @@
+---
+description: IntelliQA design system — theme, colors, typography, component patterns, and styling conventions for the frontend
+globs: src/**/*.{jsx,tsx,js,ts,css,scss}
+alwaysApply: false
+---
+
+# IntelliQA Design System
+
+## Tech Stack
+
+- **React 18** + **Vite** (module bundler)
+- **Ant Design v4** (`antd@^4.24.10`) — tables, modals, dropdowns, menus, selects, inputs
+- **MUI 5** (`@mui/material`, `@mui/joy` beta, `@mui/x-*`) — buttons, cards, dialogs, typography, data-grid, charts
+- **Emotion** (`@emotion/react`, `@emotion/styled`) — CSS-in-JS (required by MUI)
+- **Tailwind CSS 3** — utility classes (`corePlugins.preflight: false` to avoid resetting Ant/MUI)
+- **Sass** — available for SCSS if needed
+- **No styled-components** — use Emotion or MUI `sx` prop
+
+## Color Palette
+
+### CSS Custom Properties (`:root` in `App.css`)
+
+| Variable | Value | Usage |
+|----------|-------|-------|
+| `--pcolor` | `#043365` | Primary brand — nav, buttons, headings |
+| `--danger-color` | `#EF4815` | Destructive actions |
+| `--scolor` | `#4C4C4C` | Secondary text |
+| `--fcolor` | `#2B2D30` | Body text (`font-color`) |
+| `--body-bg` | `#fff` | Page background |
+| `--border-color` | `#D7D7E0` | General borders |
+| `--anchor-color` | `#1890ff` | Links |
+| `--cscroll-thumb-bg` | `#777` | Custom scrollbar thumb |
+
+### Brand Colors
+
+| Name | Hex | Context |
+|------|-----|---------|
+| Navy Primary | `#043365` | Sidebar active, primary buttons, links |
+| Deep Navy | `#0B1941` | IntelliQA headings, text-primary, card titles |
+| Navy Hover | `#03264e` | Primary button hover |
+| Apple Blue | `#007AFF` | Accent CTA, chips, tags, focus rings |
+| Apple Blue Hover | `#0051D5` | Apple-style button hover |
+
+### Semantic Colors
+
+| Role | Default | Hover |
+|------|---------|-------|
+| Success | `#388E3C` / `#2e7d32` | `#2e7031` |
+| Danger | `#D32F2F` / `#c62828` | `#9a1c1c` |
+| Warning | `#e65100` / `#f59e0b` | — |
+| Error | `#c62828` | — |
+
+### Neutral / Surface Colors
+
+| Name | Value | Usage |
+|------|-------|-------|
+| Background | `#f5f5f7` | App shell, layout background |
+| Background Secondary | `#f8fafc` | Card backgrounds, secondary areas |
+| Accordion BG | `#fafbfc` | Collapsible section backgrounds |
+| White | `#ffffff` | Cards, inputs, modals |
+| Sidebar BG | `#FAFAFA` | Navigation sidebar |
+| Border | `#e3e8ef` | Card/section borders |
+| Border Light | `#e0e0e0` | Subtle dividers |
+| Border TextField | `#d1d5db` | Input field borders |
+| Sidebar Border | `#CDD6E0` | Sidebar right border |
+| Disabled BG | `#B0B0B0` | Disabled button background |
+| Disabled Text | `#707070` | Disabled text |
+| Placeholder | `#8E8E93` | Input placeholder text (Apple gray) |
+
+### Apple-Inspired Grays
+
+| Token | Value |
+|-------|-------|
+| `appleGray` | `rgba(142, 142, 147, 0.08)` |
+| `appleGrayHover` | `rgba(142, 142, 147, 0.12)` |
+| `appleText` | `#1d1d1f` |
+| `applePlaceholder` | `#8E8E93` |
+
+### Tailwind Extended Colors
+
+| Name | Value |
+|------|-------|
+| `textblue` | `#162D6E` |
+| `headingColor` | `#424242` |
+| `dBlue` | `#0B1941` |
+| `tblue` | `#043365` |
+
+## Typography
+
+### Font Families
+
+| Priority | Font | Source | Usage |
+|----------|------|--------|-------|
+| 1 | **Montserrat** | Google Fonts (index.html) | Body text (global `font-family` in `App.css`) |
+| 2 | **Roboto** | Google Fonts (300–700) | Ant Design components, IntelliQA cards |
+| 3 | **Inter** | Referenced in `themeStyles.js` | IntelliQA test-case module (NOT loaded via CDN — falls back) |
+| 4 | SF Pro / system | `-apple-system, BlinkMacSystemFont, 'SF Pro Display'` | Apple-style headings in themeStyles |
+
+### Type Scale (from `themeStyles.typography`)
+
+| Level | Size | Weight | Color | Letter Spacing |
+|-------|------|--------|-------|----------------|
+| h1 | 18px | 700 | `#0B1941` | `-0.02em` |
+| h2 | 15px | 600 | `#1a1a1a` | `-0.01em` |
+| h3 | 13.5px | 600 | `#1a1a1a` | `-0.01em` |
+| subtitle1 | 14px | 400 | `#434343` | — |
+| body1 | 0.875rem (14px) | 600 | `#0B1941` | — |
+| body2 | 0.875rem (14px) | 500 | `#0B1941` | — |
+| caption | 0.75rem (12px) | 500 | — | — |
+| placeholder | 12.8px | 400 | `#8E8E93` | — |
+| table header | 12.8px | 600 | — | capitalize |
+| Ant table header | 11px | 700 | — | uppercase |
+
+## Spacing & Sizing
+
+### Spacing Scale (MUI units, 1 unit = 8px)
+
+| Token | Value | Pixels |
+|-------|-------|--------|
+| `xs` | 0.5 | 4px |
+| `sm` | 1 | 8px |
+| `md` | 1.5 | 12px |
+| `lg` | 2 | 16px |
+
+### Component Sizes
+
+| Component | Size | Value |
+|-----------|------|-------|
+| Search bar | height | 34px |
+| Button (small) | height | 28px |
+| Button (medium) | height | 32px |
+| Button (large) | height | 36px |
+| Button (xlarge) | height | 40px |
+| Icon (small) | size | 12px |
+| Icon (medium) | size | 14px |
+| Icon (large) | size | 16px |
+| Icon (xlarge) | size | 18px |
+| Checkbox (small) | size | 14px |
+| Checkbox (medium) | size | 16px |
+| Checkbox (large) | size | 18px |
+
+### Breakpoints
+
+| Name | Tailwind | MUI (Sidebar) |
+|------|----------|---------------|
+| sm | 640px | 600px |
+| md | 768px | 900px |
+| lg | 1024px | 1290px |
+| xl | 1280px | 1536px |
+| 2xl | 1536px | — |
+| 3xl | 1800px | — |
+| 4xl | 2200px | — |
+| 5xl | 2400px | — |
+| 6xl | 2600px | — |
+
+## Border Radius
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| small | 1 (MUI = 4px) | Subtle rounding |
+| medium | 2 (MUI = 8px) | Cards, accordions, chips |
+| large | 3 (MUI = 12px) | Modals, popovers |
+| searchBar | 10px | Search fields |
+| button | 8px | Standard buttons |
+| GlassButton | 10px | Apple-style buttons |
+| dialog | 12px | Dialog/modal paper |
+| glassMorphism popover | 16px | Frosted panels |
+
+## Shadows
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| small | `0 1px 3px rgba(0,0,0,0.08)` | Subtle elevation |
+| medium | `0 2px 6px rgba(0,0,0,0.12)` | Cards on hover |
+| focus | `0 0 0 3px rgba(25, 118, 210, 0.1)` | MUI input focus ring |
+| focusApple | `0 0 0 4px rgba(0, 122, 255, 0.1)` | Apple-style focus ring |
+| card | `0 2px 8px rgba(0, 0, 0, 0.04)` | Resting card |
+| card hover | `0 2px 6px rgba(0,0,0,0.12)` | Card hover |
+| dialog | `0 4px 20px rgba(0,0,0,0.12)` | Modal/dialog |
+| header glass | `0 8px 32px 0 rgba(31, 38, 135, 0.08)` | Header bar |
+| glass panel | `0 8px 32px rgba(0, 0, 0, 0.12)` | Frosted panels |
+| button apple | `0 4px 14px rgba(0, 122, 255, 0.3)` | Primary apple CTA |
+| custom (Tailwind) | `2px 4px 8px 2px rgba(0,0,0,0.2), 0px 3px 4px 0px rgba(0,0,0,0.14), 0px 1px 8px 0px rgba(0,0,0,0.12)` | Elevated cards |
+
+## Glass Morphism (Frosted Glass Pattern)
+
+Used in Header, GlassButton, popovers, sidebar, and minimap.
+
+```
+background: rgba(255, 255, 255, 0.72–0.95)
+backdropFilter: blur(10px–20px) saturate(180%)
+border: 1px solid rgba(255, 255, 255, 0.18–0.3)
+borderRadius: 10px–16px
+boxShadow: 0 8px 32px 0 rgba(31, 38, 135, 0.08)
+```
+
+### Header Glass Bar
+```
+background: rgba(255, 255, 255, 0.72)
+backdropFilter: blur(10px) saturate(180%)
+borderBottom: 1px solid rgba(255, 255, 255, 0.18)
+boxShadow: 0 8px 32px 0 rgba(31, 38, 135, 0.08)
+padding: py-[6px] px-[24px]
+z-index: 100
+```
+
+### Frosted Popover Panel
+```
+background: rgba(255, 255, 255, 0.9)
+backdropFilter: blur(20px)
+borderRadius: 16px
+border: 1px solid rgba(255, 255, 255, 0.3)
+boxShadow: 0 8px 32px rgba(0, 0, 0, 0.12)
+```
+
+## Transitions & Animations
+
+### Standard Easings
+
+| Name | Value | Usage |
+|------|-------|-------|
+| Default | `0.3s ease-in-out` | Input focus, card hover |
+| Apple | `0.2s cubic-bezier(0.4, 0, 0.2, 1)` | Buttons, search, sidebar |
+| Fast | `0.18s` | Login button transform |
+
+### Keyframe Animations (defined in `intelli-qa.css`)
+
+`cardEntrance`, `floatIcon`, `shimmer`, `borderGlow`, `pulseGlow`, `fadeIn`, `slideDown`, `slideInFromLeft`, `slideInFromRight`, `expandCard`, `collapseToMini`, `connectorGrow`, `subCardAppear`, `backButtonAppear`
+
+### Tailwind Animation
+
+| Name | Keyframe | Duration |
+|------|----------|----------|
+| `pulse-dots` | opacity 0 → 1 → 0 | 1s cubic-bezier |
+| `spin` | rotate 360deg | default spin |
+
+## Component Patterns
+
+### Buttons
+
+**3 button systems exist — use the right one for the context:**
+
+1. **`GlassButton`** (`src/pages/intelli-qa/components/GlassButton.jsx`)
+   - Apple-inspired glassmorphic buttons
+   - Props: `type="primary|secondary"`, `variant="glassmorphic|solid|outlined|text"`, `size="small|medium|large"`
+   - Border-radius: 10px, letter-spacing: 0.5px, textTransform: none
+   - Small: 28px height, Medium: 36px, Large: 44px
+
+2. **`MuiButton` (IntelliQA)** (`src/pages/intelli-qa/components/MuiButton.jsx`)
+   - 5 variants: `primary` (#043365), `secondary` (outlined #043365), `text`, `danger` (#D32F2F), `success` (#388E3C)
+   - Height: 40px, minWidth: 110px, textTransform: capitalize
+
+3. **`MuiButton` (Global)** (`src/components/MuiButton.jsx`)
+   - Simple: only `primary` (contained #043365) or outlined
+   - Use for non-IntelliQA pages
+
+### Cards
+
+- **`Card`** (`src/components/Card.jsx`) — Shadcn-style compound: `Card`, `CardHeader`, `CardTitle`, `CardDescription`, `CardContent`, `CardFooter`
+  - border-radius: 8px, shadow: `0px 1px 3px rgba(0, 0, 0, 0.1)`, border: 1px solid divider
+- **`CustomCard`** (`src/components/CustomCard.jsx`) — Dashboard stat card with icon, title, value, subValue
+  - border-radius: 8px, shadow: `0 2px 8px rgba(0,0,0,0.1)`
+- **IntelliQA cards** — Glass-style with gradient borders, shimmer `::after`, pulseGlow animation, hover gradients
+
+### Modals / Dialogs
+
+**Pattern A — MUI Modal (light overlay):**
+```
+backdrop: rgba(0, 0, 0, 0.04–0.25)
+content: absolute centered, bgcolor: background.paper, borderRadius: 1, p: 3
+width: ~1100px, height: ~85vh
+```
+
+**Pattern B — MUI Dialog:**
+```
+maxWidth: "sm", fullWidth: true
+PaperProps: { borderRadius: "12px", boxShadow: "0 4px 20px rgba(0,0,0,0.12)" }
+```
+
+### Text Fields
+
+- Standard: border `1.5px solid #d1d5db`, borderRadius `8px`, focus: `#1976d2` with `0 0 0 3px rgba(25, 118, 210, 0.1)` ring
+- Search: borderRadius `10px`, bg `rgba(142, 142, 147, 0.08)`, focus: Apple blue `#007AFF` with `0 0 0 4px rgba(0, 122, 255, 0.1)` ring
+- Placeholder: 12.8px, weight 400, color `#8E8E93`
+
+### Chips / Tags
+
+- fontSize: 11px, bg: `rgba(0, 122, 255, 0.1)`, color: `#007AFF`
+- border: `0.5px solid rgba(0, 122, 255, 0.2)`, borderRadius: 2 (MUI = 8px)
+- shadow: `0 1px 2px rgba(0, 122, 255, 0.1)`
+
+### Tabs
+
+- textTransform: none, fontSize: 0.875rem, fontWeight: 500
+- Selected: color `#007AFF`, fontWeight 600
+- Hover: bg `rgba(0, 122, 255, 0.05)`
+
+### Accordions
+
+- bg: `#fafbfc`, no border, borderRadius: 2, shadow: `0 2px 8px rgba(0, 0, 0, 0.04)`
+- Hover shadow: `0 4px 12px rgba(0, 0, 0, 0.06)`
+
+## Layout Structure
+
+### App Shell
+
+```
+LayoutMain: Box with bg #f5f5f7, height 100vh, overflow hidden
+├── Header: fixed glass bar (z-100, py-6px px-24px)
+└── Content area: height calc(100vh - 45px), marginTop 45px
+    └── <Outlet /> (React Router)
+```
+
+### Sidebar
+
+- Background: `#FAFAFA`, border-right: `1px solid #CDD6E0`
+- Item height: 40px, collapsed width: 50/80px, expanded: 200/250px
+- Active: bg `#E2E2E2`, text `#043365`, weight 600, left accent via `activeMenu.svg`
+
+## Icon Libraries
+
+| Library | Package | Usage |
+|---------|---------|-------|
+| MUI Icons | `@mui/icons-material` | Primary — throughout the app |
+| Ant Icons | `@ant-design/icons` | Header, login, settings |
+| Custom SVGs | `src/assets/svg/`, `/public` | Sidebar nav, brand icons |
+
+## Ant Design Overrides (in `App.css`)
+
+- Table header: bg `#f1f4f7`, font 11px/700/uppercase
+- Buttons: border-radius 4–6px, primary color `var(--pcolor)`
+- Inputs: `.ant-input-theme` with `0.3s ease-in-out` transitions
+- Selected tags: `var(--pcolor)` bg with white text
+
+## Key Design Tokens File
+
+The richest token source is `src/pages/intelli-qa/ui-testing-2/test-case/themeStyles.js`. Import and use it:
+
+```jsx
+import { themeStyles } from "../path/to/themeStyles";
+
+// Colors
+themeStyles.colors.primary        // #0B1941
+themeStyles.colors.appleBlue      // #007AFF
+themeStyles.colors.background     // #f5f5f7
+
+// Component sx props
+sx={themeStyles.components.textField}
+sx={themeStyles.components.accordion}
+sx={themeStyles.components.chip}
+sx={themeStyles.components.card}
+sx={themeStyles.components.tab}
+
+// Typography
+{...themeStyles.typography.h1}
+{...themeStyles.typography.h2}
+```
+
+## Status / Execution Colors
+
+### HTTP Method Colors
+
+| Method | Color |
+|--------|-------|
+| GET | `#22c55e` (green) |
+| POST | `#3b82f6` (blue) |
+| PUT | `#f59e0b` (amber) |
+| DELETE | `#ef4444` (red) |
+| PATCH | `#8b5cf6` (purple) |
+
+### Status Indicators
+
+| Status | BG | Text |
+|--------|-----|------|
+| Success/Pass | `rgba(34, 197, 94, 0.1)` | `#22c55e` |
+| Failed/Error | `rgba(239, 68, 68, 0.1)` | `#ef4444` |
+| Running | `rgba(59, 130, 246, 0.1)` | `#3b82f6` |
+| Pending | `rgba(245, 158, 11, 0.1)` | `#f59e0b` |
+
+## Styling Priority
+
+When adding styles, follow this order of preference:
+
+1. **`themeStyles` tokens** — for IntelliQA feature pages
+2. **CSS variables** (`var(--pcolor)`) — for global/shared styles
+3. **MUI `sx` prop** — for component-level overrides
+4. **Tailwind utilities** — for layout, spacing, responsive
+5. **CSS classes** — for Ant Design overrides and animations
+6. **Inline styles** — last resort
+
+## Do NOT
+
+- Use `styled-components` (not installed)
+- Create a global MUI `ThemeProvider` — none exists; components use default + local overrides
+- Use Tailwind `preflight` — it's disabled to preserve Ant/MUI base styles
+- Mix Inter font without adding it to `index.html` (currently not loaded via CDN)
+- Assume MUI and Tailwind breakpoints match — `lg` differs (1024px vs 1290px)

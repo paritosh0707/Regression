@@ -1,0 +1,10 @@
+{
+  "api_url": "",
+  "intelliqa_api_url": "",
+  "app": "*",
+  "env": "incedo",
+  "enable_executor": true,
+  "max_user_run_count": 2,
+  "max_global_run_count": 10,
+  "extension_url": "https://chromewebstore.google.com/detail/brainspark-ui-tracker-dev/nobpphcgnogdibcfnickgnjhomajohgg?hl=en"
+}
