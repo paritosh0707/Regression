@@ -14,7 +14,7 @@ const pipelineSteps = [
 export default function PipelineView({ currentStep = 5 }) {
   return (
     <div className="card-base p-5">
-      <h3 className="text-xs font-semibold text-[#4C4C4C] uppercase tracking-wide mb-4">Integration Pipeline</h3>
+      <h3 className="ds-h3 mb-4">Integration Pipeline</h3>
       <div className="flex items-start">
         {pipelineSteps.map((step, i) => {
           const isDone = i < currentStep;
@@ -36,7 +36,7 @@ export default function PipelineView({ currentStep = 5 }) {
                   {isDone ? <Check size={16} /> : i + 1}
                 </div>
                 <span
-                  className={`text-[10px] mt-2 text-center leading-tight max-w-[72px] ${
+                  className={`text-[12px] font-medium mt-2 text-center leading-tight max-w-[72px] ${
                     isDone || isCurrent ? 'text-dBlue font-semibold' : 'text-placeholder'
                   }`}
                 >

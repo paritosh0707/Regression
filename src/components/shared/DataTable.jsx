@@ -44,7 +44,7 @@ export default function DataTable({ columns, data, onRowClick, emptyMessage = 'N
               {columns.map((col) => (
                 <th
                   key={col.key}
-                  className="px-4 py-2.5 text-left text-[11px] font-bold uppercase tracking-wider text-[#4C4C4C] select-none"
+                  className="px-4 py-2.5 text-left text-[12.8px] font-semibold capitalize tracking-normal text-[#4C4C4C] select-none"
                   style={{ cursor: col.sortable !== false ? 'pointer' : 'default' }}
                   onClick={() => col.sortable !== false && handleSort(col.key)}
                 >
@@ -74,7 +74,7 @@ export default function DataTable({ columns, data, onRowClick, emptyMessage = 'N
                 onClick={() => onRowClick?.(row)}
               >
                 {columns.map((col) => (
-                  <td key={col.key} className="px-4 py-3 text-[13px]">
+                  <td key={col.key} className="px-4 py-3 text-[14px]">
                     {col.render ? col.render(row[col.key], row) : row[col.key]}
                   </td>
                 ))}

@@ -23,7 +23,7 @@ export default function SuiteDetail({ suite, onClose }) {
           <div className="flex items-center justify-between">
             <div>
               <span className="text-xs text-placeholder font-mono">{suite.id}</span>
-              <h2 className="text-sm font-semibold text-dBlue">{suite.name}</h2>
+              <h2 className="ds-h2">{suite.name}</h2>
             </div>
             <button onClick={onClose} className="p-1.5 rounded hover:bg-appleGrayHover">
               <X size={16} />
@@ -46,13 +46,13 @@ export default function SuiteDetail({ suite, onClose }) {
 
         {/* Purpose */}
         <div className="px-5 py-2 border-b border-borderSoft">
-          <span className="text-[10px] text-placeholder uppercase">Purpose</span>
+          <span className="text-[12px] font-medium text-placeholder">Purpose</span>
           <p className="text-[13px] text-dBlue">{suite.purpose}</p>
         </div>
 
         {/* Priority distribution */}
         <div className="px-5 py-2 border-b border-borderSoft">
-          <span className="text-[10px] text-placeholder uppercase mb-1 block">Priority Distribution</span>
+          <span className="text-[12px] font-medium text-placeholder mb-1 block">Priority Distribution</span>
           <div className="flex gap-3">
             {Object.entries(suite.priorityDistribution).map(([k, v]) => (
               <div key={k} className="flex items-center gap-1">
@@ -65,7 +65,7 @@ export default function SuiteDetail({ suite, onClose }) {
 
         {/* Tests in Suite */}
         <div className="flex-1 overflow-auto px-5 py-3">
-          <h4 className="text-xs font-semibold text-[#4C4C4C] uppercase tracking-wide mb-3">
+          <h4 className="ds-h3 mb-3">
             Tests in Suite ({suiteTests.length})
           </h4>
           <div className="space-y-2">
@@ -76,13 +76,13 @@ export default function SuiteDetail({ suite, onClose }) {
                   <GripVertical size={14} className="text-placeholder cursor-grab" />
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <span className="text-[11px] font-mono text-placeholder">{test.id}</span>
+                      <span className="text-[12px] font-mono text-placeholder">{test.id}</span>
                       <span className="text-[13px] font-medium text-dBlue truncate">{test.name}</span>
                     </div>
                     <div className="flex items-center gap-2 mt-1">
                       {test.tags.slice(0, 3).map((t) => <TagBadge key={t} label={t} />)}
                       {test.missingTags.length > 0 && (
-                        <span className="flex items-center gap-0.5 text-[10px] text-warning">
+                        <span className="flex items-center gap-0.5 text-[12px] font-medium text-warning">
                           <AlertTriangle size={10} /> {test.missingTags.length} missing
                         </span>
                       )}
@@ -101,7 +101,7 @@ export default function SuiteDetail({ suite, onClose }) {
 
           {/* Mandatory tag enforcement */}
           <div className="mt-5">
-            <h4 className="text-xs font-semibold text-[#4C4C4C] uppercase tracking-wide mb-3 flex items-center gap-1.5">
+            <h4 className="ds-h3 mb-3 flex items-center gap-1.5">
               <Tag size={12} /> Mandatory Tag Compliance
             </h4>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -110,11 +110,11 @@ export default function SuiteDetail({ suite, onClose }) {
                 const pct = suiteTests.length ? Math.round((testsWithTag.length / suiteTests.length) * 100) : 0;
                 const isComplete = pct === 100;
                 return (
-                  <div key={tag} className={`flex items-center gap-2 p-2 rounded-lg border ${isComplete ? 'border-success/30 bg-[rgba(34,197,94,0.05)]' : 'border-warning/30 bg-[rgba(245,158,11,0.05)]'}`}>
+                  <div key={tag} className={`flex items-center gap-2 p-2 rounded-lg border ${isComplete ? 'border-success/30 bg-[rgba(56,142,60,0.05)]' : 'border-warning/30 bg-[rgba(230,81,0,0.05)]'}`}>
                     {isComplete ? <Check size={12} className="text-success" /> : <Clock size={12} className="text-warning" />}
                     <div className="min-w-0">
-                      <span className="text-[11px] font-medium text-dBlue block truncate">{tag}</span>
-                      <span className={`text-[10px] ${isComplete ? 'text-success' : 'text-warning'}`}>{pct}% complete</span>
+                      <span className="text-[12px] font-medium text-dBlue block truncate">{tag}</span>
+                      <span className={`text-[12px] font-medium ${isComplete ? 'text-success' : 'text-warning'}`}>{pct}% complete</span>
                     </div>
                   </div>
                 );
@@ -130,7 +130,7 @@ export default function SuiteDetail({ suite, onClose }) {
 function MetaItem({ label, value }) {
   return (
     <div>
-      <span className="text-[10px] text-placeholder uppercase">{label}</span>
+      <span className="text-[12px] font-medium text-placeholder">{label}</span>
       <div className="text-[13px] text-dBlue font-medium mt-0.5">{typeof value === 'string' || typeof value === 'number' ? value : value}</div>
     </div>
   );

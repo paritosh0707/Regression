@@ -11,9 +11,9 @@ const modules = [
   { path: '/test-management', label: 'Test Management', desc: 'Triage & qualify candidate tests', icon: ClipboardCheck, stat: `${dashboardKpis.pendingReview} pending review`, color: '#007AFF' },
   { path: '/agentic-engine', label: 'Agentic Engine', desc: 'Validate, enrich & integrate tests', icon: Brain, stat: '14 in pipeline', color: '#8b5cf6' },
   { path: '/suite-management', label: 'Suite Management', desc: 'Curate & govern regression suites', icon: Layers, stat: `${dashboardKpis.activeSuites} active suites`, color: '#06b6d4' },
-  { path: '/script-data-repo', label: 'Script & Data Repo', desc: 'Scripts, data, configs & history', icon: FileCode2, stat: '6 files updated', color: '#f59e0b' },
-  { path: '/execution', label: 'Execution & Scheduling', desc: 'Run, schedule & bind CI/CD', icon: Play, stat: `${dashboardKpis.scheduledRuns} scheduled`, color: '#22c55e' },
-  { path: '/reporting', label: 'Reporting & Analytics', desc: 'Health, trends & coverage', icon: BarChart3, stat: `${dashboardKpis.overallPassRate}% pass rate`, color: '#ef4444' },
+  { path: '/script-data-repo', label: 'Script & Data Repo', desc: 'Scripts, data, configs & history', icon: FileCode2, stat: '6 files updated', color: '#e65100' },
+  { path: '/execution', label: 'Execution & Scheduling', desc: 'Run, schedule & bind CI/CD', icon: Play, stat: `${dashboardKpis.scheduledRuns} scheduled`, color: '#388E3C' },
+  { path: '/reporting', label: 'Reporting & Analytics', desc: 'Health, trends & coverage', icon: BarChart3, stat: `${dashboardKpis.overallPassRate}% pass rate`, color: '#D32F2F' },
   { path: '/platform', label: 'Platform & Infra', desc: 'Repos, envs, roles & audit', icon: Settings, stat: '3 repos connected', color: '#64748b' },
 ];
 
@@ -28,21 +28,21 @@ export default function DashboardPage() {
   return (
     <div className="space-y-6 animate-fadeIn">
       <div>
-        <h1 className="text-lg font-bold text-dBlue tracking-tight">Dashboard</h1>
-        <p className="text-xs text-placeholder mt-0.5">Regression Operating Layer overview</p>
+        <h1 className="ds-h1">Dashboard</h1>
+        <p className="text-[12px] font-medium text-placeholder mt-0.5">Regression Operating Layer overview</p>
       </div>
 
       {/* KPI Row */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <KpiCard title="Total Candidates" value={dashboardKpis.totalCandidates} trend={8} subtitle="from agentic runs" icon={Users} color="#007AFF" />
-        <KpiCard title="Pass Rate" value={`${dashboardKpis.overallPassRate}%`} trend={2.1} subtitle="across all suites" icon={CheckCircle2} color="#22c55e" />
+        <KpiCard title="Pass Rate" value={`${dashboardKpis.overallPassRate}%`} trend={2.1} subtitle="across all suites" icon={CheckCircle2} color="#388E3C" />
         <KpiCard title="Active Suites" value={dashboardKpis.activeSuites} subtitle={`${dashboardKpis.totalRegressionTests} tests total`} icon={Layers} color="#8b5cf6" />
-        <KpiCard title="Flaky Tests" value={dashboardKpis.flakyTests} trend={-12} subtitle="trending down" icon={AlertTriangle} color="#f59e0b" />
+        <KpiCard title="Flaky Tests" value={dashboardKpis.flakyTests} trend={-12} subtitle="trending down" icon={AlertTriangle} color="#e65100" />
       </div>
 
       {/* Module Cards */}
       <div>
-        <h2 className="text-sm font-semibold text-dBlue mb-3">Modules</h2>
+        <h2 className="ds-h2 mb-3">Modules</h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
           {modules.map((m) => (
             <Link
@@ -59,10 +59,10 @@ export default function DashboardPage() {
                 </div>
                 <div className="min-w-0">
                   <p className="text-[13px] font-semibold text-dBlue truncate">{m.label}</p>
-                  <p className="text-[11px] text-placeholder truncate">{m.desc}</p>
+                  <p className="text-[12px] font-medium text-placeholder truncate">{m.desc}</p>
                 </div>
               </div>
-              <div className="text-[11px] font-medium text-appleBlue">{m.stat}</div>
+              <div className="text-[12px] font-medium text-appleBlue">{m.stat}</div>
             </Link>
           ))}
         </div>
@@ -72,7 +72,7 @@ export default function DashboardPage() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {/* Suite Health */}
         <div className="card-base p-4">
-          <h3 className="text-sm font-semibold text-dBlue mb-3 flex items-center gap-2">
+          <h3 className="ds-h2 mb-3 flex items-center gap-2">
             <ShieldCheck size={16} className="text-appleBlue" /> Suite Health
           </h3>
           <div className="space-y-2.5">
@@ -84,7 +84,7 @@ export default function DashboardPage() {
                     className="h-full rounded-full transition-all"
                     style={{
                       width: `${s.passRate}%`,
-                      background: s.passRate >= 90 ? '#22c55e' : s.passRate >= 75 ? '#f59e0b' : '#ef4444',
+                      background: s.passRate >= 90 ? '#388E3C' : s.passRate >= 75 ? '#e65100' : '#D32F2F',
                     }}
                   />
                 </div>
@@ -97,7 +97,7 @@ export default function DashboardPage() {
 
         {/* Recent Activity */}
         <div className="card-base p-4">
-          <h3 className="text-sm font-semibold text-dBlue mb-3 flex items-center gap-2">
+          <h3 className="ds-h2 mb-3 flex items-center gap-2">
             <TrendingUp size={16} className="text-appleBlue" /> Recent Activity
           </h3>
           <div className="space-y-3">
@@ -112,7 +112,7 @@ export default function DashboardPage() {
                   }`} />
                   <div className="min-w-0">
                     <p className="text-[13px] text-dBlue leading-snug">{a.message}</p>
-                    <p className="text-[11px] text-placeholder mt-0.5">{a.time}</p>
+                    <p className="text-[12px] font-medium text-placeholder mt-0.5">{a.time}</p>
                   </div>
                 </div>
               );

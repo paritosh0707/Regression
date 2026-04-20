@@ -23,16 +23,16 @@ export default function ScriptDataRepoPage() {
   return (
     <div className="space-y-5 animate-fadeIn">
       <div>
-        <h1 className="text-lg font-bold text-dBlue tracking-tight">Script & Data Repository</h1>
-        <p className="text-xs text-placeholder mt-0.5">Traceable code, data, config, and change history for regression assets</p>
+        <h1 className="ds-h1">Script & Data Repository</h1>
+        <p className="text-[12px] font-medium text-placeholder mt-0.5">Traceable code, data, config, and change history for regression assets</p>
       </div>
 
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <KpiCard title="Scripts" value={scripts.length} icon={FileCode2} color="#007AFF" />
-        <KpiCard title="Data Assets" value={dataAssets.length} icon={Database} color="#22c55e" />
+        <KpiCard title="Data Assets" value={dataAssets.length} icon={Database} color="#388E3C" />
         <KpiCard title="Repos" value={2} icon={GitBranch} color="#8b5cf6" />
-        <KpiCard title="Recent Changes" value={allChanges.length} icon={Clock} color="#f59e0b" />
+        <KpiCard title="Recent Changes" value={allChanges.length} icon={Clock} color="#e65100" />
       </div>
 
       <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
@@ -41,7 +41,7 @@ export default function ScriptDataRepoPage() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
           {/* File tree */}
           <div className="lg:col-span-3 card-base p-3">
-            <h4 className="text-xs font-semibold text-[#4C4C4C] uppercase tracking-wide mb-2 flex items-center gap-1.5">
+            <h4 className="ds-h3 mb-2 flex items-center gap-1.5">
               <FolderOpen size={12} /> Files
             </h4>
             <div className="space-y-0.5">
@@ -59,7 +59,7 @@ export default function ScriptDataRepoPage() {
                     <FileCode2 size={12} />
                     <span className="truncate">{s.name}</span>
                   </span>
-                  <span className="text-[10px] text-placeholder block mt-0.5 truncate pl-[18px]">{s.repoPath}</span>
+                  <span className="text-[12px] font-medium text-placeholder block mt-0.5 truncate pl-[18px]">{s.repoPath}</span>
                 </button>
               ))}
             </div>
@@ -78,7 +78,7 @@ export default function ScriptDataRepoPage() {
 
       {activeTab === 'history' && (
         <div className="card-base p-5">
-          <h3 className="text-xs font-semibold text-[#4C4C4C] uppercase tracking-wide mb-4">All Changes</h3>
+          <h3 className="ds-h3 mb-4">All Changes</h3>
           <div className="space-y-3">
             {allChanges.map((ch, i) => (
               <div key={i} className="flex items-start gap-3 p-3 rounded-lg hover:bg-mutedBg transition-colors border-b border-borderSoft last:border-0">
@@ -88,11 +88,11 @@ export default function ScriptDataRepoPage() {
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-[13px] font-medium text-dBlue">{ch.type}</span>
-                    <span className="text-[11px] font-mono text-appleBlue">{ch.script}</span>
-                    <span className="text-[11px] text-placeholder">{ch.date}</span>
+                    <span className="text-[12px] font-mono text-appleBlue">{ch.script}</span>
+                    <span className="text-[12px] text-placeholder">{ch.date}</span>
                   </div>
                   <p className="text-[12px] text-[#4C4C4C] mt-0.5">{ch.detail}</p>
-                  <div className="flex items-center gap-2 mt-1 text-[11px] text-placeholder">
+                  <div className="flex items-center gap-2 mt-1 text-[12px] text-placeholder">
                     <span>by {ch.author}</span>
                     <span className="font-mono">{ch.repoPath}</span>
                   </div>

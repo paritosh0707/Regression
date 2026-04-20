@@ -4,9 +4,9 @@ import {
 } from 'recharts';
 
 const chartColors = {
-  passed: '#22c55e',
-  failed: '#ef4444',
-  flaky: '#f59e0b',
+  passed: '#388E3C',
+  failed: '#D32F2F',
+  flaky: '#e65100',
   primary: '#007AFF',
   secondary: '#8b5cf6',
 };
@@ -14,7 +14,7 @@ const chartColors = {
 export function PassFailTrendChart({ data }) {
   return (
     <div className="card-base p-5">
-      <h3 className="text-xs font-semibold text-[#4C4C4C] uppercase tracking-wide mb-4">Pass / Fail Trend</h3>
+      <h3 className="ds-h3 mb-4">Pass / Fail Trend</h3>
       <ResponsiveContainer width="100%" height={260}>
         <LineChart data={data}>
           <CartesianGrid strokeDasharray="3 3" stroke="#f1f4f7" />
@@ -34,14 +34,14 @@ export function PassFailTrendChart({ data }) {
 export function FlakyTrendChart({ data }) {
   return (
     <div className="card-base p-5">
-      <h3 className="text-xs font-semibold text-[#4C4C4C] uppercase tracking-wide mb-4">Flaky Test Trend</h3>
+      <h3 className="ds-h3 mb-4">Flaky Test Trend</h3>
       <ResponsiveContainer width="100%" height={260}>
         <AreaChart data={data}>
           <CartesianGrid strokeDasharray="3 3" stroke="#f1f4f7" />
           <XAxis dataKey="date" tick={{ fontSize: 11 }} stroke="#8E8E93" />
           <YAxis tick={{ fontSize: 11 }} stroke="#8E8E93" />
           <Tooltip contentStyle={{ borderRadius: 8, border: '1px solid #e3e8ef', fontSize: 12 }} />
-          <Area type="monotone" dataKey="flaky" stroke={chartColors.flaky} fill="rgba(245, 158, 11, 0.15)" strokeWidth={2} />
+          <Area type="monotone" dataKey="flaky" stroke={chartColors.flaky} fill="rgba(230, 81, 0, 0.15)" strokeWidth={2} />
         </AreaChart>
       </ResponsiveContainer>
     </div>
@@ -51,7 +51,7 @@ export function FlakyTrendChart({ data }) {
 export function FailureBreakdownChart({ data }) {
   return (
     <div className="card-base p-5">
-      <h3 className="text-xs font-semibold text-[#4C4C4C] uppercase tracking-wide mb-4">Failure Breakdown</h3>
+      <h3 className="ds-h3 mb-4">Failure Breakdown</h3>
       <ResponsiveContainer width="100%" height={260}>
         <PieChart>
           <Pie
@@ -78,7 +78,7 @@ export function FailureBreakdownChart({ data }) {
 export function ExecutionDurationChart({ data }) {
   return (
     <div className="card-base p-5">
-      <h3 className="text-xs font-semibold text-[#4C4C4C] uppercase tracking-wide mb-4">Execution Duration (min)</h3>
+      <h3 className="ds-h3 mb-4">Execution Duration (min)</h3>
       <ResponsiveContainer width="100%" height={260}>
         <BarChart data={data}>
           <CartesianGrid strokeDasharray="3 3" stroke="#f1f4f7" />
@@ -95,7 +95,7 @@ export function ExecutionDurationChart({ data }) {
 export function TagCoverageChart({ data }) {
   return (
     <div className="card-base p-5">
-      <h3 className="text-xs font-semibold text-[#4C4C4C] uppercase tracking-wide mb-4">Tag Coverage</h3>
+      <h3 className="ds-h3 mb-4">Tag Coverage</h3>
       <ResponsiveContainer width="100%" height={260}>
         <BarChart data={data} layout="vertical">
           <CartesianGrid strokeDasharray="3 3" stroke="#f1f4f7" />
@@ -112,7 +112,7 @@ export function TagCoverageChart({ data }) {
 export function SuiteHealthGrid({ data }) {
   return (
     <div className="card-base p-5">
-      <h3 className="text-xs font-semibold text-[#4C4C4C] uppercase tracking-wide mb-4">Suite Health Map</h3>
+      <h3 className="ds-h3 mb-4">Suite Health Map</h3>
       <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
         {data.map((s) => (
           <div
@@ -120,21 +120,21 @@ export function SuiteHealthGrid({ data }) {
             className="p-3 rounded-lg border border-borderSoft text-center"
             style={{
               background: s.health >= 90
-                ? 'rgba(34, 197, 94, 0.08)'
+                ? 'rgba(56, 142, 60, 0.08)'
                 : s.health >= 75
-                  ? 'rgba(245, 158, 11, 0.08)'
-                  : 'rgba(239, 68, 68, 0.08)',
+                  ? 'rgba(230, 81, 0, 0.08)'
+                  : 'rgba(211, 47, 47, 0.08)',
             }}
           >
             <span className="text-2xl font-bold" style={{
-              color: s.health >= 90 ? '#22c55e' : s.health >= 75 ? '#f59e0b' : '#ef4444',
+              color: s.health >= 90 ? '#388E3C' : s.health >= 75 ? '#e65100' : '#D32F2F',
             }}>
               {s.health}%
             </span>
-            <p className="text-[11px] font-medium text-dBlue mt-1">{s.suite}</p>
-            <p className="text-[10px] text-placeholder">{s.tests} tests</p>
+            <p className="text-[12px] font-medium text-dBlue mt-1">{s.suite}</p>
+            <p className="text-[12px] font-medium text-placeholder">{s.tests} tests</p>
             {s.trend !== 0 && (
-              <span className={`text-[10px] font-medium ${s.trend > 0 ? 'text-success' : 'text-danger'}`}>
+              <span className={`text-[12px] font-medium ${s.trend > 0 ? 'text-success' : 'text-danger'}`}>
                 {s.trend > 0 ? '+' : ''}{s.trend}%
               </span>
             )}
@@ -146,10 +146,10 @@ export function SuiteHealthGrid({ data }) {
 }
 
 export function ConfidenceDistributionChart({ data }) {
-  const colors = ['#22c55e', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6'];
+  const colors = ['#388E3C', '#3b82f6', '#e65100', '#D32F2F', '#8b5cf6'];
   return (
     <div className="card-base p-5">
-      <h3 className="text-xs font-semibold text-[#4C4C4C] uppercase tracking-wide mb-4">Agent Confidence Distribution</h3>
+      <h3 className="ds-h3 mb-4">Agent Confidence Distribution</h3>
       <ResponsiveContainer width="100%" height={220}>
         <BarChart data={data}>
           <CartesianGrid strokeDasharray="3 3" stroke="#f1f4f7" />

@@ -31,7 +31,7 @@ export default function Sidebar() {
     <aside
       className="h-full flex flex-col border-r transition-all duration-200 ease-in-out flex-shrink-0"
       style={{
-        width: collapsed ? 56 : 240,
+        width: collapsed ? 60 : 220,
         background: '#FAFAFA',
         borderColor: '#CDD6E0',
       }}
@@ -56,7 +56,7 @@ export default function Sidebar() {
             key={path}
             to={path}
             className={({ isActive }) =>
-              `flex items-center gap-3 mx-2 my-0.5 px-2 py-2 rounded-lg text-[13px] font-medium transition-all duration-150 ${
+              `flex items-center gap-3 mx-2 my-0.5 px-2 h-10 rounded-lg text-[13.5px] font-medium transition-all duration-150 ${
                 isActive
                   ? 'bg-[#E2E2E2] text-tblue font-semibold'
                   : 'text-[#4C4C4C] hover:bg-appleGrayHover'

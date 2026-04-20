@@ -15,7 +15,7 @@ export default function DataConfigPanel({ dataAssets }) {
               )}
               <div>
                 <h3 className="text-[13px] font-semibold text-dBlue">{asset.name}</h3>
-                <span className="text-[11px] text-placeholder">{asset.type}</span>
+                <span className="text-[12px] text-placeholder">{asset.type}</span>
               </div>
             </div>
             <div className="flex gap-1.5">
@@ -26,7 +26,7 @@ export default function DataConfigPanel({ dataAssets }) {
 
           {/* Linked tests */}
           <div className="mb-3">
-            <span className="text-[10px] text-placeholder uppercase block mb-1">Linked Tests</span>
+            <span className="text-[12px] font-medium text-placeholder block mb-1">Linked Tests</span>
             <div className="flex gap-1.5">
               {asset.linkedTests.map((t) => (
                 <span key={t} className="text-[11px] font-mono text-appleBlue bg-[rgba(0,122,255,0.08)] px-1.5 py-0.5 rounded">
@@ -38,14 +38,14 @@ export default function DataConfigPanel({ dataAssets }) {
 
           {/* Variables Table */}
           <div>
-            <span className="text-[10px] text-placeholder uppercase block mb-1">Variables / Parameters</span>
+            <span className="text-[12px] font-medium text-placeholder block mb-1">Variables / Parameters</span>
             <div className="rounded-lg border border-borderSoft overflow-hidden">
               <table className="w-full text-[12px]">
                 <thead>
                   <tr className="bg-[#f1f4f7]">
-                    <th className="px-3 py-2 text-left text-[10px] font-bold uppercase text-[#4C4C4C]">Key</th>
-                    <th className="px-3 py-2 text-left text-[10px] font-bold uppercase text-[#4C4C4C]">Value</th>
-                    <th className="px-3 py-2 text-left text-[10px] font-bold uppercase text-[#4C4C4C]">Environment</th>
+                    <th className="px-3 py-2 text-left text-[12.8px] font-semibold capitalize text-[#4C4C4C]">Key</th>
+                    <th className="px-3 py-2 text-left text-[12.8px] font-semibold capitalize text-[#4C4C4C]">Value</th>
+                    <th className="px-3 py-2 text-left text-[12.8px] font-semibold capitalize text-[#4C4C4C]">Environment</th>
                   </tr>
                 </thead>
                 <tbody>

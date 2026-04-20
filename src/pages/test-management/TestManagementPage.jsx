@@ -56,7 +56,7 @@ export default function TestManagementPage() {
       render: (v) => (
         <div className="flex items-center gap-2">
           <div className="w-12 h-1.5 bg-[#f1f4f7] rounded-full overflow-hidden">
-            <div className="h-full rounded-full" style={{ width: `${v}%`, background: v >= 85 ? '#22c55e' : v >= 70 ? '#f59e0b' : '#ef4444' }} />
+            <div className="h-full rounded-full" style={{ width: `${v}%`, background: v >= 85 ? '#388E3C' : v >= 70 ? '#e65100' : '#D32F2F' }} />
           </div>
           <span className="text-xs font-medium">{v}%</span>
         </div>
@@ -69,7 +69,7 @@ export default function TestManagementPage() {
       render: (tags, row) => (
         <div className="flex items-center gap-1 flex-wrap">
           {tags.slice(0, 2).map((t) => <TagBadge key={t} label={t} />)}
-          {tags.length > 2 && <span className="text-[10px] text-placeholder">+{tags.length - 2}</span>}
+          {tags.length > 2 && <span className="text-[12px] font-medium text-placeholder">+{tags.length - 2}</span>}
           {row.missingTags.length > 0 && <AlertTriangle size={12} className="text-warning" />}
         </div>
       ),
@@ -91,16 +91,16 @@ export default function TestManagementPage() {
   return (
     <div className="space-y-5 animate-fadeIn">
       <div>
-        <h1 className="text-lg font-bold text-dBlue tracking-tight">Test Management</h1>
-        <p className="text-xs text-placeholder mt-0.5">Triage and qualify candidate tests from agentic execution</p>
+        <h1 className="ds-h1">Test Management</h1>
+        <p className="text-[12px] font-medium text-placeholder mt-0.5">Triage and qualify candidate tests from agentic execution</p>
       </div>
 
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <KpiCard title="Total Candidates" value={stats.total} icon={Filter} color="#007AFF" />
-        <KpiCard title="Approved" value={stats.approved} icon={CheckCircle2} color="#22c55e" />
-        <KpiCard title="Pending Review" value={stats.pending} icon={Eye} color="#f59e0b" />
-        <KpiCard title="Missing Tags" value={stats.missingTags} icon={AlertTriangle} color="#ef4444" />
+        <KpiCard title="Approved" value={stats.approved} icon={CheckCircle2} color="#388E3C" />
+        <KpiCard title="Pending Review" value={stats.pending} icon={Eye} color="#e65100" />
+        <KpiCard title="Missing Tags" value={stats.missingTags} icon={AlertTriangle} color="#D32F2F" />
       </div>
 
       {/* Filters */}

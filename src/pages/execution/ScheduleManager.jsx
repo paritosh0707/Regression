@@ -19,7 +19,7 @@ export default function ScheduleManager({ schedules, pipelines }) {
     <div className="space-y-5">
       {/* Schedules */}
       <div>
-        <h3 className="text-sm font-semibold text-dBlue mb-3 flex items-center gap-2">
+        <h3 className="ds-h2 mb-3 flex items-center gap-2">
           <Calendar size={16} className="text-appleBlue" /> Schedules
         </h3>
         <DataTable columns={scheduleColumns} data={schedules} />
@@ -27,7 +27,7 @@ export default function ScheduleManager({ schedules, pipelines }) {
 
       {/* CI/CD Pipelines */}
       <div>
-        <h3 className="text-sm font-semibold text-dBlue mb-3 flex items-center gap-2">
+        <h3 className="ds-h2 mb-3 flex items-center gap-2">
           <GitBranch size={16} className="text-appleBlue" /> CI/CD Pipeline Bindings
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">

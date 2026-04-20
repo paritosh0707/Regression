@@ -34,16 +34,16 @@ export default function SuiteManagementPage() {
   return (
     <div className="space-y-5 animate-fadeIn">
       <div>
-        <h1 className="text-lg font-bold text-dBlue tracking-tight">Regression Suite Management</h1>
-        <p className="text-xs text-placeholder mt-0.5">Curate, govern, and maintain regression suites with mandatory metadata</p>
+        <h1 className="ds-h1">Regression Suite Management</h1>
+        <p className="text-[12px] font-medium text-placeholder mt-0.5">Curate, govern, and maintain regression suites with mandatory metadata</p>
       </div>
 
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <KpiCard title="Active Suites" value={stats.active} icon={Layers} color="#007AFF" />
-        <KpiCard title="Total Tests" value={stats.totalTests} icon={ShieldCheck} color="#22c55e" />
+        <KpiCard title="Total Tests" value={stats.totalTests} icon={ShieldCheck} color="#388E3C" />
         <KpiCard title="Avg Pass Rate" value={`${stats.avgPass}%`} icon={ShieldCheck} color="#8b5cf6" />
-        <KpiCard title="Flaky Tests" value={stats.totalFlaky} icon={AlertTriangle} color="#f59e0b" />
+        <KpiCard title="Flaky Tests" value={stats.totalFlaky} icon={AlertTriangle} color="#e65100" />
       </div>
 
       {/* Filters */}
@@ -74,7 +74,7 @@ export default function SuiteManagementPage() {
           >
             <div className="flex items-start justify-between mb-3">
               <div>
-                <span className="text-[11px] font-mono text-placeholder">{suite.id}</span>
+                <span className="text-[12px] font-mono text-placeholder">{suite.id}</span>
                 <h3 className="text-[14px] font-semibold text-dBlue">{suite.name}</h3>
               </div>
               <StatusBadge status={suite.lifecycle} />
@@ -84,7 +84,7 @@ export default function SuiteManagementPage() {
 
             {/* Pass rate bar */}
             <div className="mb-3">
-              <div className="flex items-center justify-between text-[11px] mb-1">
+              <div className="flex items-center justify-between text-[12px] mb-1">
                 <span className="text-placeholder">Pass Rate</span>
                 <span className="font-semibold text-dBlue">{suite.passRate}%</span>
               </div>
@@ -93,7 +93,7 @@ export default function SuiteManagementPage() {
                   className="h-full rounded-full"
                   style={{
                     width: `${suite.passRate}%`,
-                    background: suite.passRate >= 90 ? '#22c55e' : suite.passRate >= 75 ? '#f59e0b' : '#ef4444',
+                    background: suite.passRate >= 90 ? '#388E3C' : suite.passRate >= 75 ? '#e65100' : '#D32F2F',
                   }}
                 />
               </div>
@@ -101,7 +101,7 @@ export default function SuiteManagementPage() {
 
             {/* Tag completeness */}
             <div className="mb-3">
-              <div className="flex items-center justify-between text-[11px] mb-1">
+              <div className="flex items-center justify-between text-[12px] mb-1">
                 <span className="text-placeholder">Tag Completeness</span>
                 <span className={`font-semibold ${suite.tagCompleteness >= 90 ? 'text-success' : 'text-warning'}`}>{suite.tagCompleteness}%</span>
               </div>
@@ -110,14 +110,14 @@ export default function SuiteManagementPage() {
                   className="h-full rounded-full"
                   style={{
                     width: `${suite.tagCompleteness}%`,
-                    background: suite.tagCompleteness >= 90 ? '#22c55e' : '#f59e0b',
+                    background: suite.tagCompleteness >= 90 ? '#388E3C' : '#e65100',
                   }}
                 />
               </div>
             </div>
 
             {/* Stats row */}
-            <div className="flex items-center gap-4 text-[11px] text-placeholder">
+            <div className="flex items-center gap-4 text-[12px] text-placeholder">
               <span className="flex items-center gap-1"><Layers size={11} /> {suite.testCount} tests</span>
               <span className="flex items-center gap-1"><AlertTriangle size={11} /> {suite.flakyCount} flaky</span>
               <span className="flex items-center gap-1"><Calendar size={11} /> {suite.lastModified}</span>
@@ -131,7 +131,7 @@ export default function SuiteManagementPage() {
             </div>
 
             {/* Footer meta */}
-            <div className="flex items-center gap-3 mt-3 pt-2 border-t border-borderSoft text-[11px] text-placeholder">
+            <div className="flex items-center gap-3 mt-3 pt-2 border-t border-borderSoft text-[12px] text-placeholder">
               <span>Owner: <span className="text-dBlue font-medium">{suite.owner}</span></span>
               <span>Tier: <span className="text-dBlue font-medium">{suite.executionTier}</span></span>
               {suite.linkedSchedule && (

@@ -7,10 +7,10 @@ export default function Header() {
       style={{ height: 45 }}
     >
       <div className="flex items-center gap-3">
-        <span className="text-base font-bold text-dBlue tracking-tight">
+        <span className="text-[18px] font-bold text-dBlue tracking-[-0.02em]">
           IntelliQA
         </span>
-        <span className="text-xs text-placeholder font-medium">
+        <span className="text-[12px] font-medium text-placeholder">
           Regression Operating Layer
         </span>
       </div>
@@ -21,10 +21,11 @@ export default function Header() {
           <input
             type="text"
             placeholder="Search..."
-            className="pl-8 pr-3 py-1.5 text-xs rounded-searchbar border-0 transition-all duration-200"
+            className="pl-8 pr-3 text-xs rounded-searchbar border-0 transition-all duration-200"
             style={{
               background: 'rgba(142, 142, 147, 0.08)',
               width: 200,
+              height: 34,
             }}
             onFocus={(e) => {
               e.target.style.boxShadow = '0 0 0 4px rgba(0, 122, 255, 0.1)';

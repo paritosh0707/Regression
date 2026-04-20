@@ -345,8 +345,8 @@ export const passFailTrend = [
 ];
 
 export const failureBreakdown = [
-  { name: 'Timeout', value: 35, color: '#ef4444' },
-  { name: 'Assertion', value: 28, color: '#f59e0b' },
+  { name: 'Timeout', value: 35, color: '#D32F2F' },
+  { name: 'Assertion', value: 28, color: '#e65100' },
   { name: 'Element Not Found', value: 18, color: '#3b82f6' },
   { name: 'Network Error', value: 12, color: '#8b5cf6' },
   { name: 'Data Mismatch', value: 7, color: '#06b6d4' },

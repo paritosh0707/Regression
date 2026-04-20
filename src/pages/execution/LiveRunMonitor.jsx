@@ -16,12 +16,12 @@ export default function LiveRunMonitor({ runs }) {
           <div className="flex items-start justify-between mb-3">
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-[11px] font-mono text-placeholder">{run.id}</span>
+                <span className="text-[12px] font-mono text-placeholder">{run.id}</span>
                 <StatusBadge status={run.status} />
               </div>
               <h3 className="text-[14px] font-semibold text-dBlue mt-0.5">{run.suite}</h3>
             </div>
-            <div className="text-right text-[11px] text-placeholder">
+            <div className="text-right text-[12px] text-placeholder">
               <div>Environment: <span className="text-dBlue font-medium">{run.environment}</span></div>
               <div>Branch: <span className="text-dBlue font-medium font-mono">{run.branch}</span></div>
               <div>Triggered: <span className="text-dBlue font-medium">{run.triggeredBy}</span></div>
@@ -30,7 +30,7 @@ export default function LiveRunMonitor({ runs }) {
 
           {/* Progress bar */}
           <div className="mb-3">
-            <div className="flex items-center justify-between text-[11px] mb-1">
+            <div className="flex items-center justify-between text-[12px] mb-1">
               <span className="text-placeholder">Progress</span>
               <span className="font-semibold text-dBlue">{run.progress}%</span>
             </div>
@@ -40,7 +40,7 @@ export default function LiveRunMonitor({ runs }) {
                 style={{
                   width: `${run.progress}%`,
                   background: run.status === 'Completed'
-                    ? (run.failed > 0 ? '#f59e0b' : '#22c55e')
+                    ? (run.failed > 0 ? '#e65100' : '#388E3C')
                     : '#007AFF',
                 }}
               />
@@ -59,16 +59,16 @@ export default function LiveRunMonitor({ runs }) {
           {/* Test results (if available) */}
           {run.testResults.length > 0 && (
             <div className="border-t border-borderSoft pt-3">
-              <h4 className="text-[11px] font-semibold text-[#4C4C4C] uppercase mb-2">Test Results</h4>
+              <h4 className="ds-h3 mb-2">Test Results</h4>
               <div className="space-y-1.5">
                 {run.testResults.map((tr) => (
                   <div key={tr.testId} className="flex items-center gap-3 py-1.5 px-2 rounded-lg hover:bg-mutedBg">
                     {statusIcon[tr.status]}
-                    <span className="text-[11px] font-mono text-placeholder w-14">{tr.testId}</span>
+                    <span className="text-[12px] font-mono text-placeholder w-14">{tr.testId}</span>
                     <span className="text-[12px] text-dBlue flex-1">{tr.name}</span>
-                    <span className="text-[11px] text-placeholder">{tr.duration}</span>
+                    <span className="text-[12px] text-placeholder">{tr.duration}</span>
                     {tr.error && (
-                      <span className="text-[11px] text-danger max-w-[200px] truncate">{tr.error}</span>
+                      <span className="text-[12px] text-danger max-w-[200px] truncate">{tr.error}</span>
                     )}
                   </div>
                 ))}
@@ -76,7 +76,7 @@ export default function LiveRunMonitor({ runs }) {
             </div>
           )}
 
-          <div className="text-[11px] text-placeholder mt-2">Started: {run.startedAt}</div>
+          <div className="text-[12px] text-placeholder mt-2">Started: {run.startedAt}</div>
         </div>
       ))}
     </div>

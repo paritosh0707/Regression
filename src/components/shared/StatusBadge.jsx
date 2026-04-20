@@ -34,7 +34,7 @@ export default function StatusBadge({ status, className = '' }) {
   const style = statusStyles[key] || 'status-pending';
 
   return (
-    <span className={`inline-flex items-center px-2 py-0.5 rounded-md text-[11px] font-semibold capitalize ${style} ${className}`}>
+    <span className={`inline-flex items-center px-2 py-0.5 rounded-lg text-[11px] font-semibold capitalize ${style} ${className}`}>
       {status}
     </span>
   );

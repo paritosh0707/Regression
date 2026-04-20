@@ -4,9 +4,9 @@ export default function KpiCard({ title, value, subtitle, trend, trendLabel, ico
   const isPositive = trend === undefined || trend >= 0;
 
   return (
-    <div className="card-base card-hover p-4 flex flex-col gap-2 animate-fadeIn">
+    <div className="bg-white rounded-lg border border-borderSoft shadow-statCard card-hover p-4 flex flex-col gap-2 animate-fadeIn">
       <div className="flex items-center justify-between">
-        <span className="text-xs font-medium text-[#4C4C4C] uppercase tracking-wide">{title}</span>
+        <span className="ds-caption text-[#4C4C4C]">{title}</span>
         {Icon && (
           <div
             className="w-8 h-8 rounded-lg flex items-center justify-center"
@@ -26,7 +26,7 @@ export default function KpiCard({ title, value, subtitle, trend, trendLabel, ico
         )}
       </div>
       {(subtitle || trendLabel) && (
-        <span className="text-[11px] text-placeholder">{subtitle || trendLabel}</span>
+        <span className="text-[12px] font-medium text-placeholder">{subtitle || trendLabel}</span>
       )}
     </div>
   );

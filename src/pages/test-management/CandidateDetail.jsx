@@ -19,7 +19,7 @@ export default function CandidateDetail({ candidate, onClose, onApprove, onRejec
               <span className="text-xs text-placeholder font-mono">{c.id}</span>
               <StatusBadge status={c.reviewState} />
             </div>
-            <h2 className="text-sm font-semibold text-dBlue mt-0.5">{c.name}</h2>
+            <h2 className="ds-h2 mt-0.5">{c.name}</h2>
           </div>
           <button onClick={onClose} className="p-1.5 rounded hover:bg-appleGrayHover">
             <X size={16} />
@@ -40,7 +40,7 @@ export default function CandidateDetail({ candidate, onClose, onApprove, onRejec
 
           {/* Tags */}
           <div className="px-5 py-3 border-b border-borderSoft">
-            <h4 className="text-xs font-semibold text-[#4C4C4C] uppercase tracking-wide mb-2 flex items-center gap-1.5">
+            <h4 className="ds-h3 mb-2 flex items-center gap-1.5">
               Tags
             </h4>
             <div className="flex flex-wrap gap-1.5">
@@ -49,7 +49,7 @@ export default function CandidateDetail({ candidate, onClose, onApprove, onRejec
             {c.missingTags.length > 0 && (
               <div className="mt-2 flex items-start gap-1.5">
                 <AlertTriangle size={12} className="text-warning mt-0.5" />
-                <span className="text-[11px] text-warning font-medium">
+                <span className="text-[12px] font-medium text-warning">
                   Missing mandatory: {c.missingTags.join(', ')}
                 </span>
               </div>
@@ -58,7 +58,7 @@ export default function CandidateDetail({ candidate, onClose, onApprove, onRejec
 
           {/* Steps */}
           <div className="px-5 py-3 border-b border-borderSoft">
-            <h4 className="text-xs font-semibold text-[#4C4C4C] uppercase tracking-wide mb-2 flex items-center gap-1.5">
+            <h4 className="ds-h3 mb-2 flex items-center gap-1.5">
               <List size={12} /> Steps
             </h4>
             <div className="space-y-2">
@@ -79,7 +79,7 @@ export default function CandidateDetail({ candidate, onClose, onApprove, onRejec
 
           {/* Script */}
           <div className="px-5 py-3 border-b border-borderSoft">
-            <h4 className="text-xs font-semibold text-[#4C4C4C] uppercase tracking-wide mb-2 flex items-center gap-1.5">
+            <h4 className="ds-h3 mb-2 flex items-center gap-1.5">
               <Code2 size={12} /> Generated Script
             </h4>
             <div className="flex items-center gap-2 mb-2">
@@ -94,7 +94,7 @@ export default function CandidateDetail({ candidate, onClose, onApprove, onRejec
 
           {/* Script Meta */}
           <div className="px-5 py-3">
-            <h4 className="text-xs font-semibold text-[#4C4C4C] uppercase tracking-wide mb-2 flex items-center gap-1.5">
+            <h4 className="ds-h3 mb-2 flex items-center gap-1.5">
               <FileText size={12} /> Script Metadata
             </h4>
             <div className="grid grid-cols-2 gap-2 text-[12px]">
@@ -119,7 +119,7 @@ export default function CandidateDetail({ candidate, onClose, onApprove, onRejec
 function InfoItem({ label, value }) {
   return (
     <div>
-      <span className="text-[10px] text-placeholder uppercase tracking-wide">{label}</span>
+      <span className="text-[12px] font-medium text-placeholder">{label}</span>
       <div className="text-[13px] text-dBlue font-medium mt-0.5">{typeof value === 'string' ? value : value}</div>
     </div>
   );

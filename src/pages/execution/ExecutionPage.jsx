@@ -28,16 +28,16 @@ export default function ExecutionPage() {
   return (
     <div className="space-y-5 animate-fadeIn">
       <div>
-        <h1 className="text-lg font-bold text-dBlue tracking-tight">Execution & Scheduling</h1>
-        <p className="text-xs text-placeholder mt-0.5">Run, schedule, and bind regression to CI/CD pipelines</p>
+        <h1 className="ds-h1">Execution & Scheduling</h1>
+        <p className="text-[12px] font-medium text-placeholder mt-0.5">Run, schedule, and bind regression to CI/CD pipelines</p>
       </div>
 
       {/* KPIs */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
         <KpiCard title="Active Runs" value={activeRuns} icon={Activity} color="#007AFF" />
-        <KpiCard title="Total Runs" value={totalRuns} icon={Play} color="#22c55e" />
+        <KpiCard title="Total Runs" value={totalRuns} icon={Play} color="#388E3C" />
         <KpiCard title="Active Schedules" value={activeSchedules} icon={Calendar} color="#8b5cf6" />
-        <KpiCard title="CI/CD Pipelines" value={cicdPipelines.length} icon={GitBranch} color="#f59e0b" />
+        <KpiCard title="CI/CD Pipelines" value={cicdPipelines.length} icon={GitBranch} color="#e65100" />
       </div>
 
       <Tabs tabs={tabs} activeTab={activeTab} onChange={setActiveTab} />
@@ -45,11 +45,11 @@ export default function ExecutionPage() {
       {/* Execution Setup */}
       {activeTab === 'setup' && (
         <div className="card-base p-6 max-w-2xl">
-          <h3 className="text-sm font-semibold text-dBlue mb-4">New Execution</h3>
+          <h3 className="ds-h2 mb-4">New Execution</h3>
 
           {/* Run mode */}
           <div className="mb-4">
-            <label className="text-[11px] text-placeholder uppercase tracking-wide block mb-1.5">Run By</label>
+            <label className="text-[12px] font-medium text-placeholder block mb-1.5">Run By</label>
             <div className="flex gap-1">
               {['suite', 'tag', 'branch'].map((m) => (
                 <button
@@ -67,7 +67,7 @@ export default function ExecutionPage() {
 
           {/* Suite selector */}
           <div className="mb-4">
-            <label className="text-[11px] text-placeholder uppercase tracking-wide block mb-1.5">
+            <label className="text-[12px] font-medium text-placeholder block mb-1.5">
               {runMode === 'suite' ? 'Select Suite' : runMode === 'tag' ? 'Enter Tag' : 'Enter Branch'}
             </label>
             {runMode === 'suite' ? (
@@ -94,7 +94,7 @@ export default function ExecutionPage() {
 
           {/* Environment */}
           <div className="mb-4">
-            <label className="text-[11px] text-placeholder uppercase tracking-wide block mb-1.5">Environment</label>
+            <label className="text-[12px] font-medium text-placeholder block mb-1.5">Environment</label>
             <select
               value={selectedEnv}
               onChange={(e) => setSelectedEnv(e.target.value)}

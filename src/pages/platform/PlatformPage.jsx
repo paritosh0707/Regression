@@ -11,9 +11,9 @@ import { platformConfig } from '../../data/mockData';
 
 const sections = [
   { key: 'repos', label: 'Repository Connections', icon: GitBranch, color: '#007AFF' },
-  { key: 'envs', label: 'Environment Registry', icon: Globe, color: '#22c55e' },
+  { key: 'envs', label: 'Environment Registry', icon: Globe, color: '#388E3C' },
   { key: 'roles', label: 'Role Management', icon: Users, color: '#8b5cf6' },
-  { key: 'notifications', label: 'Notifications', icon: Bell, color: '#f59e0b' },
+  { key: 'notifications', label: 'Notifications', icon: Bell, color: '#e65100' },
   { key: 'audit', label: 'Audit Log', icon: ClipboardList, color: '#06b6d4' },
 ];
 
@@ -25,8 +25,8 @@ export default function PlatformPage() {
   return (
     <div className="space-y-5 animate-fadeIn">
       <div>
-        <h1 className="text-lg font-bold text-dBlue tracking-tight">Platform & Infrastructure</h1>
-        <p className="text-xs text-placeholder mt-0.5">Admin governance, connections, roles, and auditability</p>
+        <h1 className="ds-h1">Platform & Infrastructure</h1>
+        <p className="text-[12px] font-medium text-placeholder mt-0.5">Admin governance, connections, roles, and auditability</p>
       </div>
 
       {/* Summary cards */}
@@ -64,11 +64,11 @@ export default function PlatformPage() {
                   <span className="text-[13px] font-medium text-dBlue">{repo.name}</span>
                   <StatusBadge status={repo.status} />
                 </div>
-                <span className="text-[11px] text-placeholder">
+                <span className="text-[12px] text-placeholder">
                   {repo.provider} &bull; Branch: {repo.branch} &bull; Last sync: {repo.lastSync}
                 </span>
               </div>
-              <button className="text-[11px] text-appleBlue hover:underline flex items-center gap-0.5">
+              <button className="text-[12px] text-appleBlue hover:underline flex items-center gap-0.5">
                 <ExternalLink size={10} /> Open
               </button>
             </div>
@@ -80,7 +80,7 @@ export default function PlatformPage() {
       <CollapsibleSection
         title="Environment Registry"
         icon={Globe}
-        color="#22c55e"
+        color="#388E3C"
         expanded={expanded.envs}
         onToggle={() => toggle('envs')}
       >
@@ -132,7 +132,7 @@ export default function PlatformPage() {
       <CollapsibleSection
         title="Notifications"
         icon={Bell}
-        color="#f59e0b"
+        color="#e65100"
         expanded={expanded.notifications}
         onToggle={() => toggle('notifications')}
       >
@@ -142,7 +142,7 @@ export default function PlatformPage() {
               <Bell size={14} className="text-warning flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <span className="text-[13px] font-medium text-dBlue">{n.event}</span>
-                <div className="text-[11px] text-placeholder">
+                <div className="text-[12px] text-placeholder">
                   {n.channel} &bull; Recipients: {n.recipients}
                 </div>
               </div>
@@ -166,7 +166,7 @@ export default function PlatformPage() {
               <div className="w-1.5 h-1.5 rounded-full bg-appleBlue mt-2 flex-shrink-0" />
               <div className="flex-1 min-w-0">
                 <p className="text-[13px] text-dBlue">{entry.action}</p>
-                <div className="flex items-center gap-3 text-[11px] text-placeholder mt-0.5">
+                <div className="flex items-center gap-3 text-[12px] text-placeholder mt-0.5">
                   <span>{entry.timestamp}</span>
                   <span>{entry.user}</span>
                   <TagBadge label={entry.module} variant="neutral" />
@@ -189,7 +189,7 @@ function CollapsibleSection({ title, icon: Icon, color, expanded, onToggle, chil
       >
         <div className="flex items-center gap-2">
           <Icon size={16} style={{ color }} />
-          <span className="text-sm font-semibold text-dBlue">{title}</span>
+          <span className="ds-h2">{title}</span>
         </div>
         {expanded ? <ChevronUp size={16} className="text-placeholder" /> : <ChevronDown size={16} className="text-placeholder" />}
       </button>
